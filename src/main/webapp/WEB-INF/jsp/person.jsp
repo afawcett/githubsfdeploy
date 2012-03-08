@@ -15,10 +15,17 @@
     <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
 
     <!--
-    IMPORTANT:
-    This is Heroku specific styling. Remove to customize.
+      IMPORTANT:
+      This is Heroku specific styling. Remove to customize.
     -->
     <link href="http://heroku.github.com/template-app-bootstrap/heroku.css" rel="stylesheet">
+    <!-- /// -->
+
+    <!--
+      IMPORTANT:
+      To do the replacement {{app-name}} for the real name application
+    -->
+    <script src="http://heroku.github.com/template-app-bootstrap/heroku.js"></script>
     <!-- /// -->
 
 </head>
@@ -28,6 +35,7 @@
     <div class="navbar-inner">
         <div class="container">
             <a href="/" class="brand">Spring MVC and Hibernate Template</a>
+            <a href="/" class="brand" id="heroku">by <strong>heroku</strong></a>
         </div>
     </div>
 </div>
