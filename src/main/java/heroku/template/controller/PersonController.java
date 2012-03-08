@@ -20,7 +20,7 @@ public class PersonController {
 	@Autowired
 	private PersonService personService;
 
-	@RequestMapping("/index")
+	@RequestMapping("/people")
 	public String listPeople(Map<String, Object> map) {
 
 		map.put("person", new Person());
@@ -35,7 +35,7 @@ public class PersonController {
 
 		personService.addPerson(person);
 
-		return "redirect:/index";
+		return "redirect:/people";
 	}
 
 	@RequestMapping("/delete/{personId}")
@@ -44,6 +44,6 @@ public class PersonController {
 
 		personService.removePerson(personId);
 
-		return "redirect:/index";
+		return "redirect:/people";
 	}
 }
