@@ -4,34 +4,33 @@ import heroku.template.model.Person;
 
 import java.util.List;
 
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PersonServiceImpl implements PersonService {
 
-	@Autowired
-	private SessionFactory sessionFactory;
+    @PersistenceContext
+    EntityManager em;
         
     @Transactional
     public void addPerson(Person person) {
-    	sessionFactory.getCurrentSession().save(person);
+    	em.persist(person);
     }
 
     @Transactional
     public List<Person> listPeople() {
-
-    	return sessionFactory.getCurrentSession().createQuery("from Person").list();
+    	return em.createQuery("from Person").getResultList();
     }
 
     @Transactional
     public void removePerson(Integer id) {
-		Person person = (Person) sessionFactory.getCurrentSession().load(
-				Person.class, id);
+		Person person = (Person) em.find(Person.class, id);
 		if (null != person) {
-			sessionFactory.getCurrentSession().delete(person);
+			em.remove(person);
 		}
     }
     
