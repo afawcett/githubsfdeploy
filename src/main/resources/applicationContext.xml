@@ -1,0 +1,66 @@
+<?xml  version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+                           http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+    <context:annotation-config />
+    <context:component-scan base-package="heroku.template" />
+
+    <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+        <property name="prefix" value="/WEB-INF/jsp/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+
+    <tx:annotation-driven />
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <beans profile="default">
+        <jdbc:embedded-database id="dataSource"/>
+
+        <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+            <property name="dataSource" ref="dataSource"/>
+            <property name="packagesToScan" value="heroku.template.model"/>
+            <property name="hibernateProperties">
+                <props>
+                    <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+                    <prop key="hibernate.hbm2ddl.auto">create</prop>
+                </props>
+            </property>
+        </bean>
+    </beans>
+
+    <beans profile="prod">
+        <bean class="java.net.URI" id="dbUrl">
+            <constructor-arg value="#{systemEnvironment['DATABASE_URL']}"/>
+        </bean>
+
+        <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+            <property name="url" value="#{ 'jdbc:postgresql://' + @dbUrl.getHost() + @dbUrl.getPath() }"/>
+            <property name="username" value="#{ @dbUrl.getUserInfo().split(':')[0] }"/>
+            <property name="password" value="#{ @dbUrl.getUserInfo().split(':')[1] }"/>
+        </bean>
+
+        <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+            <property name="dataSource" ref="dataSource" />
+            <property name="packagesToScan" value="heroku.template.model"/>
+            <property name="hibernateProperties">
+                <props>
+                    <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+                    <prop key="hibernate.show_sql">true</prop>
+                    <prop key="hibernate.hbm2ddl.auto">update</prop>
+                </props>
+            </property>
+        </bean>
+    </beans>
+
+</beans>
