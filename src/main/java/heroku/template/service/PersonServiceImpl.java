@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +25,9 @@ public class PersonServiceImpl implements PersonService {
 
     @Transactional
     public List<Person> listPeople() {
-    	return em.createQuery("from Person").getResultList();
+    	CriteriaQuery<Person> c = em.getCriteriaBuilder().createQuery(Person.class);
+        Root<Person> p = c.from(Person.class);
+        return em.createQuery(c).getResultList();
     }
 
     @Transactional

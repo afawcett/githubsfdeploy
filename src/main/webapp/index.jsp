@@ -1,3 +1,3 @@
 Instructions Here...
 <br><br>
-<a href="people">app in action</a>
+<a href="people/">app in action</a>
