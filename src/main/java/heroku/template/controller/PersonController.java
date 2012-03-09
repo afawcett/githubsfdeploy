@@ -2,10 +2,6 @@ package heroku.template.controller;
 
 import heroku.template.model.Person;
 import heroku.template.service.PersonService;
-
-import java.util.Map;
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -13,6 +9,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.Map;
 
 @Controller
 public class PersonController {
@@ -30,8 +28,7 @@ public class PersonController {
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String addPerson(@ModelAttribute("person")
-	Person person, BindingResult result) {
+	public String addPerson(@ModelAttribute("person") Person person, BindingResult result) {
 
 		personService.addPerson(person);
 
@@ -39,8 +36,7 @@ public class PersonController {
 	}
 
 	@RequestMapping("/delete/{personId}")
-	public String deletePerson(@PathVariable("personId")
-	Integer personId) {
+	public String deletePerson(@PathVariable("personId") Integer personId) {
 
 		personService.removePerson(personId);
 
