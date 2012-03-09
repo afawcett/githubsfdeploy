@@ -17,22 +17,22 @@ public class PersonServiceImpl implements PersonService {
         
     @Transactional
     public void addPerson(Person person) {
-    	em.persist(person);
+        em.persist(person);
     }
 
     @Transactional
     public List<Person> listPeople() {
-    	CriteriaQuery<Person> c = em.getCriteriaBuilder().createQuery(Person.class);
+        CriteriaQuery<Person> c = em.getCriteriaBuilder().createQuery(Person.class);
         c.from(Person.class);
         return em.createQuery(c).getResultList();
     }
 
     @Transactional
     public void removePerson(Integer id) {
-		Person person = em.find(Person.class, id);
-		if (null != person) {
-			em.remove(person);
-		}
+        Person person = em.find(Person.class, id);
+        if (null != person) {
+            em.remove(person);
+        }
     }
     
 }

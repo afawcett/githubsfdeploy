@@ -15,31 +15,31 @@ import java.util.Map;
 @Controller
 public class PersonController {
 
-	@Autowired
-	private PersonService personService;
+    @Autowired
+    private PersonService personService;
 
-	@RequestMapping("/")
-	public String listPeople(Map<String, Object> map) {
+    @RequestMapping("/")
+    public String listPeople(Map<String, Object> map) {
 
-		map.put("person", new Person());
-		map.put("peopleList", personService.listPeople());
+        map.put("person", new Person());
+        map.put("peopleList", personService.listPeople());
 
-		return "people";
-	}
+        return "people";
+    }
 
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String addPerson(@ModelAttribute("person") Person person, BindingResult result) {
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public String addPerson(@ModelAttribute("person") Person person, BindingResult result) {
 
-		personService.addPerson(person);
+        personService.addPerson(person);
 
-		return "redirect:/people/";
-	}
+        return "redirect:/people/";
+    }
 
-	@RequestMapping("/delete/{personId}")
-	public String deletePerson(@PathVariable("personId") Integer personId) {
+    @RequestMapping("/delete/{personId}")
+    public String deletePerson(@PathVariable("personId") Integer personId) {
 
-		personService.removePerson(personId);
+        personService.removePerson(personId);
 
-		return "redirect:/people/";
-	}
+        return "redirect:/people/";
+    }
 }
