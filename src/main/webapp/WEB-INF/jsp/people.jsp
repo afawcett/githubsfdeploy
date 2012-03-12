@@ -56,8 +56,8 @@
             </form:form>
 
 
-            <h3>People</h3>
             <c:if  test="${!empty peopleList}">
+                <h3>People</h3>
                 <table class="table table-bordered table-striped">
                     <thead>
                     <tr>

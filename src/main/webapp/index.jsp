@@ -26,7 +26,7 @@
         display:block;
       }
       .screenshot a {
-        padding: 0px;
+        padding: 0;
         line-height: 1;
         display: inline-block;
         text-decoration: none;
@@ -40,23 +40,15 @@
         -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
         box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
       }
-
-      .tool-choice {
-        border-bottom: 1px solid #ddd;
-        padding-bottom: 17px;
-        margin: 18px 0;
-      }
-      .tool-choice .span3 {
-        text-align: center;
-      }
-      .tool-choice .btn {
-        width: 197px;
-      }
-      .tool-choice a img {
-        cursor: pointer;
-      }
     </style>
     <!-- /// -->
+    <script type="text/javascript">
+      <!--
+      function appname() {
+          return location.hostname.substring(0,location.hostname.indexOf("."));
+      }
+      // -->
+    </script>
   </head>
 
   <body>
@@ -326,12 +318,5 @@ Authentication successful.</pre>
     <script src="http://twitter.github.com/bootstrap/assets/js/jquery.js"></script>
     <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-modal.js"></script>
     <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-tab.js"></script>
-    <script type="text/javascript">
-    <!--
-        function appname() {
-          return location.hostname.substring(0,location.hostname.indexOf("."));
-        }
-    // -->
-    </script>
   </body>
 </html>
