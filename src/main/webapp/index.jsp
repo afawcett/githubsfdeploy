@@ -81,7 +81,7 @@
           </div>
           
         <ul id="tab" class="nav nav-tabs">
-            <li class="active"><a href="#eclipse-instructions" data-toggle="tab">Use Eclipse</a></li>
+            <li class="active"><a href="#eclipse-instructions" data-toggle="tab">Use Eclipse 3.7</a></li>
             <li><a href="#cli-instructions" data-toggle="tab">Use Command Line</a></li>
         </ul>
 
@@ -90,7 +90,7 @@
 
           <div id="eclipse-instructions" class="instructions tab-pane active">
             <a name="using-eclipse"></a>
-            <h1>Using Eclipse:</h1>
+            <h1>Using Eclipse 3.7:</h1>
             
             <h2>Step 1. Setup your environment</h2>
             <ol>
