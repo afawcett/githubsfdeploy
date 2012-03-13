@@ -3,13 +3,14 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>template-app-name</title>
+    <title>Spring MVC and Hibernate Template</title>
 
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
     <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.css">
 
     <!--
     IMPORTANT:
@@ -74,7 +75,11 @@
           <div class="page-header">
             <h1>Get started with your Spring MVC and Hibernate Application</h1>
           </div>
-
+          
+          <div style="margin-bottom: 20px">
+            This is a template for a web application that uses Spring MVC and Hibernate. The sample code is a simple CRUD page that manipulates records for a single model object. To try it out go to the <a href="/people/">people page</a>. Then use Eclipse or the Command Line to deploy some changes. 
+          </div>
+          
         <ul id="tab" class="nav nav-tabs">
             <li class="active"><a href="#eclipse-instructions" data-toggle="tab">Use Eclipse</a></li>
             <li><a href="#cli-instructions" data-toggle="tab">Use Command Line</a></li>
@@ -189,11 +194,12 @@
 
             <h2>Step 4. Makes some changes to the app</h2>
             <ol>
-              <li>Open <code>HelloServlet.java</code></li>
-              <li>Modify line 20 with:
-                <code>
-                  out.write("Deployed first change!".getBytes());
-                </code>
+              <li>Open <code>PersonServiceImpl.java</code></li>
+              <li>Query the people in alphabetical order by replacing line 29 with the following two lines:
+                <pre class="once language-java">
+Root&lt;Person&gt; from = c.from(Person.class);
+c.orderBy(em.getCriteriaBuilder().asc(from.get("lastName")));
+                </pre>
               </li>
             </ol>
 

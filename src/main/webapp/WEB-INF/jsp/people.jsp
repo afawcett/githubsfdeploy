@@ -6,7 +6,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>template-app-name</title>
+    <title>Spring MVC and Hibernate Template</title>
 
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,13 +19,6 @@
       This is Heroku specific styling. Remove to customize.
     -->
     <link href="http://heroku.github.com/template-app-bootstrap/heroku.css" rel="stylesheet">
-    <!-- /// -->
-
-    <!--
-      IMPORTANT:
-      To do the replacement {{app-name}} for the real name application
-    -->
-    <script src="http://heroku.github.com/template-app-bootstrap/heroku.js"></script>
     <!-- /// -->
 
 </head>

@@ -1,8 +1,9 @@
-package heroku.template.service;
+package com.example.service;
 
-import heroku.template.model.Person;
 
 import java.util.List;
+
+import com.example.model.Person;
 
 public interface PersonService {
     
