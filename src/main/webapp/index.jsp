@@ -96,7 +96,7 @@
             <ol>
               <li>Ensure <a href="http://unicase.blogspot.com/2011/01/egit-tutorial-for-beginners.html">EGit</a> is installed.</li>
               <li>Ensure the <a href="http://www.eclipse.org/m2e/">Maven Eclipse Plugin</a> is installed.</li>
-              <li>Create an SSH key:
+              <li>Create an SSH key if you haven't already:
                 <ol>
                   <li>Go to <code>Window</code> <i class="icon-chevron-right"></i> <code>Preferences</code> <i class="icon-chevron-right"></i> <code>General</code> <i class="icon-chevron-right"></i> <code>Network Connections</code> <i class="icon-chevron-right"></i> <code>SSH2</code></li>
                   <li>Choose the <code>Key Management</code> tab</li>
@@ -247,6 +247,9 @@ c.orderBy(em.getCriteriaBuilder().asc(from.get("lastName")));
               <h1>Done!</h1>
               <p>You've just cloned, modified, and deployed a brand new app.</p>
               <a href="/people/" class="btn btn-primary btn-large">See your changes</a>
+                
+              <p style="margin-top: 20px">Learn more at the   
+              <a href="http://devcenter.heroku.com/categories/java">Heroku Dev Center</a></p>
             </div>
           </div>
 
@@ -308,6 +311,9 @@ Authentication successful.</pre>
               <h1>Done!</h1>
               <p>You've just cloned, modified, and deployed a brand new app.</p>
               <a href="/people/" class="btn btn-primary btn-large">See your changes</a>
+                
+              <p style="margin-top: 20px">Learn more at the   
+              <a href="http://devcenter.heroku.com/categories/java">Heroku Dev Center</a></p>
             </div>
           </div>
         </div>
