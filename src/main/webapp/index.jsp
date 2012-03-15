@@ -289,12 +289,12 @@ Authentication successful.</pre>
 
             <h2>Step 4. Makes some changes to the app</h2>
             <ol>
-              <li><script>document.write("<code>cd " + appname() + "</code>")</script></li>
-              <li>Open <code>src/main/java/HelloServlet.java</code> with your favorite editor</li>
-              <li>Modify line 20 with:
-                <code>
-                  out.write("Deployed first change!".getBytes());
-                </code>
+              <li>Open <code>src/main/java/com/example/PersonServiceImpl.java in your favorite editor</code></li>
+              <li>Query the people in alphabetical order by replacing line 29 with the following two lines:
+                <pre class="once language-java">
+Root&lt;Person&gt; from = c.from(Person.class);
+c.orderBy(em.getCriteriaBuilder().asc(from.get("lastName")));
+                </pre>
               </li>
             </ol>
 
