@@ -1,41 +1,32 @@
 package com.example.service;
 
+import com.force.api.ApiConfig;
+import com.force.api.ForceApi;
+import com.force.api.QueryResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.model.Person;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
 import java.util.List;
 
 @Service
 public class PersonServiceImpl implements PersonService {
 
-    @PersistenceContext
-    EntityManager em;
-        
-    @Transactional
+    @Autowired
+    private ApiConfig apiConfig;
+    
     public void addPerson(Person person) {
-        em.persist(person);
+        new ForceApi(apiConfig).createSObject("contact", person);
     }
 
-    @Transactional
     public List<Person> listPeople() {
-        CriteriaQuery<Person> c = em.getCriteriaBuilder().createQuery(Person.class);
-        c.from(Person.class);
-        return em.createQuery(c).getResultList();
+        QueryResult<Person> res = new ForceApi(apiConfig).query("SELECT Id, FirstName, LastName FROM contact", Person.class);
+        return res.getRecords();
     }
 
-    @Transactional
-    public void removePerson(Integer id) {
-        Person person = em.find(Person.class, id);
-        if (null != person) {
-            em.remove(person);
-        }
+    public void removePerson(String id) {
+        new ForceApi(apiConfig).deleteSObject("contact", id);
     }
     
 }

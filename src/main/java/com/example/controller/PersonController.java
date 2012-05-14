@@ -37,7 +37,7 @@ public class PersonController {
     }
 
     @RequestMapping("/delete/{personId}")
-    public String deletePerson(@PathVariable("personId") Integer personId) {
+    public String deletePerson(@PathVariable("personId") String personId) {
 
         personService.removePerson(personId);
 

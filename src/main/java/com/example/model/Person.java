@@ -1,26 +1,26 @@
 package com.example.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
-@Entity
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Person {
 
-    @Id
-    @GeneratedValue
-    private Integer id;
+    @JsonProperty(value="Id")
+    private String id;
 
+    @JsonProperty(value="FirstName")
     private String firstName;
 
+    @JsonProperty(value="LastName")
     private String lastName;
 
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
