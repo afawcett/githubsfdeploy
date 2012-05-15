@@ -50,7 +50,7 @@
             <groupId>com.github.jsimone</groupId>
             <artifactId>webapp-runner</artifactId>
             <version>7.0.22.3</version>
-            <!--<scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
