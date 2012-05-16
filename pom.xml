@@ -17,8 +17,13 @@
             <name>force-rest-api repository on GitHub</name>
             <url>http://jesperfj.github.com/force-rest-api/repository/</url>
         </repository>
+        <repository>
+            <id>spring-milestone</id>
+            <name>Spring Framework Milestone Repository</name>
+            <url>http://maven.springframework.org/milestone</url>
+        </repository>
     </repositories>
-    
+
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -31,6 +36,20 @@
             <artifactId>spring-webmvc</artifactId>
             <version>${org.springframework.version}</version>
         </dependency>
+        <!--
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        -->
+        <!--
+        <dependency>
+            <groupId>org.springframework.security.oauth</groupId>
+            <artifactId>spring-security-oauth2</artifactId>
+            <version>1.0.0.M6a</version>
+        </dependency>
+        -->
         <dependency>
             <groupId>taglibs</groupId>
             <artifactId>standard</artifactId>
@@ -45,6 +64,16 @@
             <groupId>com.force.api</groupId>
             <artifactId>force-rest-api</artifactId>
             <version>0.0.15</version>
+        </dependency>
+        <dependency>
+            <groupId>com.force.sdk</groupId>
+            <artifactId>force-oauth</artifactId>
+            <version>22.0.8-BETA</version>
+        </dependency>
+        <dependency>
+            <groupId>com.force.sdk</groupId>
+            <artifactId>force-springsecurity</artifactId>
+            <version>22.0.8-BETA</version>
         </dependency>
         <dependency>
             <groupId>com.github.jsimone</groupId>
