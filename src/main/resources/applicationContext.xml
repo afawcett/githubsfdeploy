@@ -20,6 +20,7 @@
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
         <property name="prefix" value="/WEB-INF/jsp/" />
         <property name="suffix" value=".jsp" />
+        <property name="redirectHttp10Compatible" value="false" />
     </bean>
 
     <fss:oauth>
