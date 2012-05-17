@@ -1,28 +1,35 @@
-# Spring MVC and Hibernate template application
+# Spring MVC and Force.com template application
 
-This is a template for a web application that uses Spring MVC and Hibernate. The sample code is a simple CRUD page that manipulates records for a single model object.
+This is a template for a web application that uses Spring MVC and Force.com. The sample code is a simple CRUD page that manipulates records for a single model object.
 
 ## Running the application locally
 
-First build with:
+Setup OAuth Remote Access in Salesforce.com
 
-    $ mvn clean install
+    1. Go to Salesforce.com's Setup page
+    2. Go to Develop -> Remote Access
+    3. Add a new Remote Access config with a URL of: `http://localhost:8080/_auth`
 
-Add environment variablesfor authenticating to Salesforce.com:
+Add environment variables for authenticating to Salesforce.com (replace the values with the ones from the Remote Access definition on Salesforce.com):
 
 - On Linux/Mac:
 
-        $ export FORCE_USERNAME=blah@foo.com
-        $ export FORCE_PASSWORD=asdf1234
+        $ export OAUTH_CLIENT_KEY=3MVM3_GuVCQ3gmEE5al72RmBfiAWhBX5O2wYc9zTZ8ytj1E3NF7grV_G99OxTyEcY71Tc46TOvzK_rzoyYYPk
+        $ export OAUTH_CLIENT_SECRET=1319558946720906100
 
 - On Windows:
 
-        $ set FORCE_USERNAME=blah@foo.com
-        $ set FORCE_PASSWORD=asdf1234
+        $ set OAUTH_CLIENT_KEY=3MVM3_GuVCQ3gmEE5al72RmBfiAWhBX5O2wYc9zTZ8ytj1E3NF7grV_G99OxTyEcY71Tc46TOvzK_rzoyYYPk
+        $ set OAUTH_CLIENT_SECRET=1319558946720906100
+
+Build with:
+
+    $ mvn clean install
 
 Then run it with:
 
     $ java -jar target/dependency/webapp-runner.jar target/*.war
+
 
 ## Running on Heroku
 
@@ -35,9 +42,15 @@ Create a new app on Heroku (make sure you have the [Heroku Toolbelt](http://tool
     $ heroku login
     $ heroku create -s cedar
 
-Add config params for authenticating to Salesforce.com:
+Setup OAuth Remote Access in Salesforce.com
 
-    $ heroku config:add FORCE_USERNAME=blah@foo.com FORCE_PASSWORD=asdf1234
+    1. Go to Salesforce.com's Setup page
+    2. Go to Develop -> Remote Access
+    3. Add a new Remote Access config with a URL of: `https://your-app-1234.herokuapp.com/_auth`
+
+Add config params for authenticating to Salesforce.com (replace the values with the ones from the Remote Access definition on Salesforce.com):
+
+    $ heroku config:add OAUTH_CLIENT_KEY=3MVM3_GuVCQ3gmEE5al72RmBfiAWhBX5O2wYc9zTZ8ytj1E3NF7grV_G99OxTyEcY71Tc46TOvzK_rzoyYYPk OAUTH_CLIENT_SECRET=1319558946720906100
 
 Upload the app to Heroku:
 
