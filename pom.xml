@@ -17,11 +17,6 @@
             <name>force-rest-api repository on GitHub</name>
             <url>http://jesperfj.github.com/force-rest-api/repository/</url>
         </repository>
-        <repository>
-            <id>spring-milestone</id>
-            <name>Spring Framework Milestone Repository</name>
-            <url>http://maven.springframework.org/milestone</url>
-        </repository>
     </repositories>
 
     <dependencies>
