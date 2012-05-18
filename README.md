@@ -14,13 +14,13 @@ Add environment variables for authenticating to Salesforce.com (replace the valu
 
 - On Linux/Mac:
 
-        $ export OAUTH_CLIENT_KEY=3MVM3_GuVCQ3gmEE5al72RmBfiAWhBX5O2wYc9zTZ8ytj1E3NF7grV_G99OxTyEcY71Tc46TOvzK_rzoyYYPk
-        $ export OAUTH_CLIENT_SECRET=1319558946720906100
+        $ export SFDC_OAUTH_CLIENT_ID=3MVM3_GuVCQ3gmEE5al72RmBfiAWhBX5O2wYc9zTZ8ytj1E3NF7grV_G99OxTyEcY71Tc46TOvzK_rzoyYYPk
+        $ export SFDC_OAUTH_CLIENT_SECRET=1319558946720906100
 
 - On Windows:
 
-        $ set OAUTH_CLIENT_KEY=3MVM3_GuVCQ3gmEE5al72RmBfiAWhBX5O2wYc9zTZ8ytj1E3NF7grV_G99OxTyEcY71Tc46TOvzK_rzoyYYPk
-        $ set OAUTH_CLIENT_SECRET=1319558946720906100
+        $ set SFDC_OAUTH_CLIENT_ID=3MVM3_GuVCQ3gmEE5al72RmBfiAWhBX5O2wYc9zTZ8ytj1E3NF7grV_G99OxTyEcY71Tc46TOvzK_rzoyYYPk
+        $ set SFDC_OAUTH_CLIENT_SECRET=1319558946720906100
 
 Build with:
 
@@ -50,7 +50,7 @@ Setup OAuth Remote Access in Salesforce.com
 
 Add config params for authenticating to Salesforce.com (replace the values with the ones from the Remote Access definition on Salesforce.com):
 
-    $ heroku config:add OAUTH_CLIENT_KEY=3MVM3_GuVCQ3gmEE5al72RmBfiAWhBX5O2wYc9zTZ8ytj1E3NF7grV_G99OxTyEcY71Tc46TOvzK_rzoyYYPk OAUTH_CLIENT_SECRET=1319558946720906100
+    $ heroku config:add SFDC_OAUTH_CLIENT_ID=3MVM3_GuVCQ3gmEE5al72RmBfiAWhBX5O2wYc9zTZ8ytj1E3NF7grV_G99OxTyEcY71Tc46TOvzK_rzoyYYPk SFDC_OAUTH_CLIENT_SECRET=1319558946720906100
 
 Upload the app to Heroku:
 
