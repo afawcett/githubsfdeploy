@@ -17,8 +17,8 @@ public class OAuthConfigChecker implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         if (System.getenv("SFDC_OAUTH_CLIENT_ID") == null || System.getenv("SFDC_OAUTH_CLIENT_SECRET") == null) {
-            final String appName = servletRequest.getRemoteHost().replace(".herokuapp.com", "");
-            ((HttpServletResponse)servletResponse).sendRedirect("https://agi.herokuapp.com/oauthConfig?app=" + URLEncoder.encode(appName, "UTF-8") + "&callbackUrl=/_auth");
+            final String appName = servletRequest.getServerName().replace(".herokuapp.com", "");
+            ((HttpServletResponse)servletResponse).sendRedirect("https://agi.herokuapp.com/oauthConfig?app=" + appName + "&callbackUrl=/_auth");
         }
     }
 
