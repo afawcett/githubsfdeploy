@@ -20,6 +20,7 @@ public class OAuthConfigChecker implements Filter {
             final String appName = servletRequest.getServerName().replace(".herokuapp.com", "");
             ((HttpServletResponse)servletResponse).sendRedirect("https://agi.herokuapp.com/oauthConfig?app=" + appName + "&callbackUrl=/_auth");
         }
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 
     @Override
