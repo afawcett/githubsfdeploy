@@ -37,12 +37,12 @@
     <div class="row">
         <div class="span8 offset2">
             <div class="page-header">
-                <h1>${sobject.label}: ${record.key.name}</h1>
+                <h1>${record.metadata.label}: ${record.get("Name").value}</h1>
             </div>
 
             <table class="table table-striped table-condensed">
-            <c:forEach items="${record}" var="field">
-                <tr><td>${field.key.label}</td><td>${field.value}</td></tr>
+            <c:forEach items="${record.fields}" var="field">
+                <tr><td>${field.metadata.label}</td><td>${field.value}</td></tr>
             </c:forEach>
             </table>
         </div>

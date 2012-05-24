@@ -1,5 +1,7 @@
 package com.example.service;
 
+import com.example.model.ImmutableRichSObject;
+import com.example.model.RichSObject;
 import com.force.api.ApiSession;
 import com.force.api.DescribeSObject;
 import com.force.api.ForceApi;
@@ -23,7 +25,7 @@ public class SObjectsServiceImpl implements SObjectsService {
     }
 
     @Override
-    public List<DescribeSObject> listSObjects() {
+    public List<DescribeSObject> listSObjectTypes() {
         final List<DescribeSObject> describeSObjects = getForceApi().describeGlobal().getSObjects();
         Collections.sort(describeSObjects, new Comparator<DescribeSObject>() {
             @Override
@@ -34,58 +36,43 @@ public class SObjectsServiceImpl implements SObjectsService {
         return Collections.unmodifiableList(describeSObjects);
     }
 
+
     @Override
-    public List<Map<String, String>> getRecentItems(String sobject) {
-        final List<Map> rawRecentItems = getForceApi().getRecentItems(sobject, Map.class);
-        final List<Map<String, String>> recentItems = new ArrayList<Map<String, String>>(rawRecentItems.size());
-        for (Map item : rawRecentItems) {
-            //noinspection unchecked
-            recentItems.add((Map<String, String>) item);
-        }
-        return Collections.unmodifiableList(recentItems);
+    public DescribeSObject describeSObjectType(String type) {
+        return getForceApi().describeSObject(type);
     }
 
     @Override
-    public Map<DescribeSObject.Field, Object> getSObject(String sobject, String id) {
-        @SuppressWarnings("unchecked")
-        final Map<String,Object> rawRecord = (Map<String, Object>) getForceApi().getSObject(sobject, id).asMap();
-        final DescribeSObject describeSObject = describeSObject(sobject);
-        final List<DescribeSObject.Field> labelSortedFields = sortByLabel(describeSObject.getFields());
-        return makeRichRecord(stripToPopulatedFields(labelSortedFields, rawRecord), rawRecord);
+    public RichSObject getSObject(String type, String id) {
+        return new ImmutableRichSObject(describeSObjectType(type), getRawSObject(type, id));
+    }
+
+    private Map<String, Object> getRawSObject(String sobject, String id) {
+        //noinspection unchecked
+        return (Map<String, Object>) getForceApi().getSObject(sobject, id).asMap();
     }
 
     @Override
-    public DescribeSObject describeSObject(String sobject) {
-        return getForceApi().describeSObject(sobject);
-    }
+    public Iterator<RichSObject> getRecentItems(String type) {
+        final DescribeSObject describeSObject = describeSObjectType(type);
+        final Iterator<Map> rawRecentItems = getForceApi().getRecentItems(type, Map.class).iterator();
 
-    private List<DescribeSObject.Field> sortByLabel(List<DescribeSObject.Field> fields) {
-        List<DescribeSObject.Field> sortedFields = new ArrayList<DescribeSObject.Field>(fields);
-        Collections.sort(sortedFields, new Comparator<DescribeSObject.Field>() {
+        return new Iterator<RichSObject>() {
             @Override
-            public int compare(DescribeSObject.Field o1, DescribeSObject.Field o2) {
-                return o1.getLabel().compareTo(o2.getLabel());
+            public boolean hasNext() {
+                return rawRecentItems.hasNext();
             }
-        });
-        return Collections.unmodifiableList(sortedFields);
-    }
 
-    private List<DescribeSObject.Field> stripToPopulatedFields(List<DescribeSObject.Field> fields, Map<String, Object> record) {
-        List<DescribeSObject.Field> strippedFields = new ArrayList<DescribeSObject.Field>();
-        for (DescribeSObject.Field field : fields) {
-            if (record.containsKey(field.getName()) && record.get(field.getName()) != null) {
-                strippedFields.add(field);
+            @Override
+            public RichSObject next() {
+                //noinspection unchecked
+                return new ImmutableRichSObject(describeSObject, rawRecentItems.next());
             }
-        }
-        return Collections.unmodifiableList(strippedFields);
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("Recent items cannot be removed");
+            }
+        };
     }
-    
-    private Map<DescribeSObject.Field, Object> makeRichRecord(List<DescribeSObject.Field> fields, Map<String, Object> record) {
-        Map<DescribeSObject.Field, Object> richRecord = new LinkedHashMap<DescribeSObject.Field, Object>(record.size());
-        for (DescribeSObject.Field field : fields) {
-            richRecord.put(field, record.get(field.getName()));
-        }
-        return Collections.unmodifiableMap(richRecord);
-    }
-    
 }

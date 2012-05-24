@@ -1,18 +1,21 @@
 package com.example.service;
 
 
+import com.example.model.RichSObject;
 import com.force.api.DescribeSObject;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public interface SObjectsService {
     
-    List<DescribeSObject> listSObjects();
+    List<DescribeSObject> listSObjectTypes();
 
-    List<Map<String,String>> getRecentItems(String sobject);
+    Iterator<RichSObject> getRecentItems(String type);
 
-    Map<DescribeSObject.Field, Object> getSObject(String sobject, String id);
+    RichSObject getSObject(String type, String id);
 
-    DescribeSObject describeSObject(String sobject);
+    DescribeSObject describeSObjectType(String type);
+
 }

@@ -37,12 +37,12 @@
     <div class="row">
         <div class="span8 offset2">
             <div class="page-header">
-                <h1>${sobject.label}</h1>
+                <h1>${type.label}</h1>
             </div>
 
-            <c:forEach items="${recentItems}" var="record">
+            <c:forEach items="${recentRecords}" var="record">
                 <ul>
-                    <li><a href="${sobject.name}/${record.Id}">${record.Name}</a></li>
+                    <li><a href="${record.metadata.name}/${record.get("id").value}">${record.get("name").value}</a></li>
                 </ul>
             </c:forEach>
         </div>
