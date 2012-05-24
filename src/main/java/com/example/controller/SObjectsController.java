@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.service.SObjectsService;
+import com.force.api.DescribeSObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,15 +17,23 @@ public class SObjectsController {
     private SObjectsService sobjectsService;
 
     @RequestMapping("")
-    public String listSObjects(Map<String, Object> map) {
+    public String indexAllSObjects(Map<String, Object> map) {
         map.put("sobjects", sobjectsService.listSObjects());
-        return "listSObjects";
+        return "indexAllSObjects";
     }
 
     @RequestMapping("{sobject}")
-    public String getSObject(@PathVariable("sobject") String sobject, Map<String, Object> map) {
-        map.put("sobject", sobject);
+    public String indexSObject(@PathVariable("sobject") String sobject, Map<String, Object> map) {
+        map.put("sobject", sobjectsService.describeSObject(sobject));
         map.put("recentItems", sobjectsService.getRecentItems(sobject));
-        return "listSObjectRecords";
+        return "indexSObject";
+    }
+
+    @RequestMapping("{sobject}/{id}")
+    public String readSObjectRecord(@PathVariable("sobject") String sobject, @PathVariable("id") String id, Map<String, Object> map) {
+        final DescribeSObject describeSObject = sobjectsService.describeSObject(sobject);
+        map.put("sobject", describeSObject);
+        map.put("record", sobjectsService.getSObject(sobject, id));
+        return "readSObjectRecord";
     }
 }

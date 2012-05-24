@@ -27,7 +27,7 @@
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
-            <a href="/" class="brand">Spring MVC and Hibernate Template</a>
+            <a href="/" class="brand">Salesforce Spring MVC Template</a>
             <a href="/" class="brand" id="heroku">by <strong>heroku</strong></a>
         </div>
     </div>
@@ -37,14 +37,14 @@
     <div class="row">
         <div class="span8 offset2">
             <div class="page-header">
-                <h1>SObjects</h1>
+                <h1>${sobject.label}: ${record.key.name}</h1>
             </div>
 
-            <c:forEach items="${sobjects}" var="sobject">
-                <ul>
-                    <li><a href="sobjects/${sobject}">${sobject}</a></li>
-                </ul>
+            <table class="table table-striped table-condensed">
+            <c:forEach items="${record}" var="field">
+                <tr><td>${field.key.label}</td><td>${field.value}</td></tr>
             </c:forEach>
+            </table>
         </div>
     </div>
 </div>
