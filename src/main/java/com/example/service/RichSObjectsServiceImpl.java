@@ -43,13 +43,24 @@ public class RichSObjectsServiceImpl implements RichSObjectsService {
     }
 
     @Override
-    public void deleteSObject(String type, String id) {
-        getForceApi().deleteSObject(type, id);
+    public RichSObject newSObject(String type) {
+        //noinspection unchecked
+        return new ImmutableRichSObject(describeSObjectType(type), Collections.EMPTY_MAP);
+    }
+
+    @Override
+    public String createSObject(String type, Map<String, String> record) {
+        return getForceApi().createSObject(type, record);
     }
 
     @Override
     public void updateSObject(String type, String id, Map<String, String> record) {
         getForceApi().updateSObject(type, id, record);
+    }
+
+    @Override
+    public void deleteSObject(String type, String id) {
+        getForceApi().deleteSObject(type, id);
     }
 
     @Override

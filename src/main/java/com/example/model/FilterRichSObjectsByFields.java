@@ -19,22 +19,20 @@ public class FilterRichSObjectsByFields extends RichSObjectWrapper {
         return fieldFilterIterator;
     }
 
+    public static FilterRichSObjectsByFields CREATEABLE_FIELDS_ONLY(RichSObject wrapped) {
+        return new FilterRichSObjectsByFields(wrapped, new IteratorFilter<RichField>(wrapped.getFields()) {
+            @Override
+            boolean canBeNext(RichField maybeNext) {
+                return maybeNext.getMetadata().isCreateable() && !isPersonAccountField(maybeNext);
+            }
+        });
+    }
+
     public static FilterRichSObjectsByFields UPDATEABLE_FIELDS_ONLY(RichSObject wrapped) {
         return new FilterRichSObjectsByFields(wrapped, new IteratorFilter<RichField>(wrapped.getFields()) {
             @Override
             boolean canBeNext(RichField maybeNext) {
                 return maybeNext.getMetadata().isUpdateable() && !isPersonAccountField(maybeNext);
-            }
-
-            private boolean isPersonAccountField(RichField maybeNext) {
-                if ("Account".equals(maybeNext.getParent().getMetadata().getName())) {
-                    final String fieldName = maybeNext.getMetadata().getName();
-                    if ("FirstName".equals(fieldName) ||  "LastName".equals(fieldName) || fieldName.endsWith("__pc")) {
-                        return true;
-                    }
-                }
-
-                return false;
             }
         });
     }
@@ -55,5 +53,16 @@ public class FilterRichSObjectsByFields extends RichSObjectWrapper {
                 return "string".equals(maybeNext.getMetadata().getType());
             }
         });
+    }
+
+    private static boolean isPersonAccountField(RichField maybeNext) {
+        if ("Account".equals(maybeNext.getParent().getMetadata().getName())) {
+            final String fieldName = maybeNext.getMetadata().getName();
+            if ("FirstName".equals(fieldName) ||  "LastName".equals(fieldName) || fieldName.endsWith("__pc")) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

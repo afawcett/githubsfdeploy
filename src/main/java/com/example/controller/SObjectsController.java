@@ -35,6 +35,21 @@ public class SObjectsController {
         return "listRecentSObjectRecords";
     }
 
+    @RequestMapping("{type}/e")
+    public String newSObjectRecord(@PathVariable("type") String type, Map<String, Object> map) {
+        map.put("record", FilterRichSObjectsByFields.STRING_FIELDS_ONLY(FilterRichSObjectsByFields.CREATEABLE_FIELDS_ONLY(sobjectsService.newSObject(type))));
+        return "editSObjectRecord";
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "{type}/e")
+    public String createSObjectRecord(@PathVariable("type") String type, HttpServletRequest request) throws IOException {
+        final ServletServerHttpRequest inputMessage = new ServletServerHttpRequest(request);
+        final Map<String,String> formData = new FormHttpMessageConverter().read(null, inputMessage).toSingleValueMap();
+        final String id = sobjectsService.createSObject(type, formData);
+
+        return "redirect:" + id;
+    }
+
     @RequestMapping("{type}/{id}")
     public String readSObjectRecord(@PathVariable("type") String type, @PathVariable("id") String id, Map<String, Object> map) {
         map.put("record", FilterRichSObjectsByFields.POPULATED_FIELDS_ONLY(sobjectsService.getSObject(type, id)));

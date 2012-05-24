@@ -40,6 +40,10 @@
                 <h1><c:out value="${type.labelPlural}"/></h1>
             </div>
 
+            <div class="btn-group" style="margin: 10px">
+                <a href="${type.name}/e" class="btn btn-primary">New</a>
+            </div>
+
             <h2>Recent Items</h2>
             <c:forEach items="${recentRecords}" var="record">
                 <ul>

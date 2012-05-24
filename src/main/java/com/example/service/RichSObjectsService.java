@@ -18,7 +18,12 @@ public interface RichSObjectsService {
 
     DescribeSObject describeSObjectType(String type);
 
+    RichSObject newSObject(String type);
+
+    void updateSObject(String type, String id, Map<String, String> record);
+
+    String createSObject(String type, Map<String, String> record);
+
     void deleteSObject(String type, String id);
 
-    void updateSObject(String type, String id, Map<String, String> data);
 }
