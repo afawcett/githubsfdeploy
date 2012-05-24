@@ -37,12 +37,12 @@
     <div class="row">
         <div class="span8 offset2">
             <div class="page-header">
-                <h1>SObjects</h1>
+                <h1>${sobject}</h1>
             </div>
 
-            <c:forEach items="${sobjects}" var="sobject">
+            <c:forEach items="${recentItems}" var="record">
                 <ul>
-                    <li><a href="sobjects/${sobject}">${sobject}</a></li>
+                    <li><a href="sobjects/${sobject}/${record.Id}">${record.Name}</a></li>
                 </ul>
             </c:forEach>
         </div>

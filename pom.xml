@@ -44,7 +44,7 @@
         <dependency>
             <groupId>com.force.api</groupId>
             <artifactId>force-rest-api</artifactId>
-            <version>0.0.18</version>
+            <version>0.0.19-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.force.sdk</groupId>
