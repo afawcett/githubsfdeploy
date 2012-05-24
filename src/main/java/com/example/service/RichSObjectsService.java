@@ -6,9 +6,10 @@ import com.force.api.DescribeSObject;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public interface RichSObjectsService {
-    
+
     List<DescribeSObject> listSObjectTypes();
 
     Iterator<RichSObject> getRecentItems(String type);
@@ -18,4 +19,6 @@ public interface RichSObjectsService {
     DescribeSObject describeSObjectType(String type);
 
     void deleteSObject(String type, String id);
+
+    void updateSObject(String type, String id, Map<String, String> data);
 }

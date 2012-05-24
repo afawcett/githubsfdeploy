@@ -4,11 +4,15 @@ import com.example.model.FilterRichSObjectsByFields;
 import com.example.model.FullCrudTypesOnlyFilter;
 import com.example.service.RichSObjectsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.Map;
 
 @Controller
@@ -39,12 +43,16 @@ public class SObjectsController {
 
     @RequestMapping("{type}/{id}/e")
     public String editSObjectRecord(@PathVariable("type") String type, @PathVariable("id") String id, Map<String, Object> map) {
-        map.put("record", FilterRichSObjectsByFields.UPDATEABLE_FIELDS_ONLY(sobjectsService.getSObject(type, id)));
+        map.put("record", FilterRichSObjectsByFields.STRING_FIELDS_ONLY(FilterRichSObjectsByFields.UPDATEABLE_FIELDS_ONLY(sobjectsService.getSObject(type, id))));
         return "editSObjectRecord";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "{type}/{id}/e")
-    public String updateSObjectRecord(@PathVariable("type") String type, @PathVariable("id") String id, Map<String, Object> map) {
+    public String updateSObjectRecord(@PathVariable("type") String type, @PathVariable("id") String id, HttpServletRequest request) throws IOException {
+        final ServletServerHttpRequest inputMessage = new ServletServerHttpRequest(request);
+        final Map<String,String> formData = new FormHttpMessageConverter().read(null, inputMessage).toSingleValueMap();
+        sobjectsService.updateSObject(type, id, formData);
+
         return "redirect:../" + id;
     }
 

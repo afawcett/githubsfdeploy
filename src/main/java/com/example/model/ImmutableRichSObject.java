@@ -83,6 +83,12 @@ public class ImmutableRichSObject implements RichSObject {
             this.fieldName = fieldName;
         }
 
+
+        @Override
+        public RichSObject getParent() {
+            return ImmutableRichSObject.this;
+        }
+
         @Override
         public DescribeSObject.Field getMetadata() {
             return indexedFieldMetadata.get(fieldName);

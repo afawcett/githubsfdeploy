@@ -48,6 +48,11 @@ public class RichSObjectsServiceImpl implements RichSObjectsService {
     }
 
     @Override
+    public void updateSObject(String type, String id, Map<String, String> record) {
+        getForceApi().updateSObject(type, id, record);
+    }
+
+    @Override
     public RichSObject getSObject(String type, String id) {
         return new ImmutableRichSObject(describeSObjectType(type), getRawSObject(type, id));
     }
