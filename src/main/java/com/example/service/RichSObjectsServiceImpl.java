@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class SObjectsServiceImpl implements SObjectsService {
+public class RichSObjectsServiceImpl implements RichSObjectsService {
     
     private ForceApi getForceApi() {
         SecurityContext sc = ForceSecurityContextHolder.get();

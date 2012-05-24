@@ -1,6 +1,7 @@
 package com.example.controller;
 
-import com.example.service.SObjectsService;
+import com.example.model.PopulatedFieldsOnlyRichSObject;
+import com.example.service.RichSObjectsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +14,7 @@ import java.util.Map;
 public class SObjectsController {
 
     @Autowired
-    private SObjectsService sobjectsService;
+    private RichSObjectsService sobjectsService;
 
     @RequestMapping("")
     public String indexAllSObjects(Map<String, Object> map) {
@@ -30,7 +31,7 @@ public class SObjectsController {
 
     @RequestMapping("{type}/{id}")
     public String readSObjectRecord(@PathVariable("type") String type, @PathVariable("id") String id, Map<String, Object> map) {
-        map.put("record", sobjectsService.getSObject(type, id));
+        map.put("record", new PopulatedFieldsOnlyRichSObject(sobjectsService.getSObject(type, id)));
         return "readSObjectRecord";
     }
 }
