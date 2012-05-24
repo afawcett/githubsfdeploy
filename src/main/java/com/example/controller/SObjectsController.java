@@ -1,7 +1,7 @@
 package com.example.controller;
 
-import com.example.model.PopulatedFieldsOnlyFilter;
-import com.example.model.UpdateableFieldsOnlyFilter;
+import com.example.model.FilterRichSObjectsByFields;
+import com.example.model.FullCrudTypesOnlyFilter;
 import com.example.service.RichSObjectsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,7 +20,7 @@ public class SObjectsController {
 
     @RequestMapping("")
     public String indexAllSObjects(Map<String, Object> map) {
-        map.put("types", sobjectsService.listSObjectTypes());
+        map.put("types", new FullCrudTypesOnlyFilter(sobjectsService.listSObjectTypes().iterator()));
         return "listSObjectTypes";
     }
 
@@ -33,13 +33,13 @@ public class SObjectsController {
 
     @RequestMapping("{type}/{id}")
     public String readSObjectRecord(@PathVariable("type") String type, @PathVariable("id") String id, Map<String, Object> map) {
-        map.put("record", new PopulatedFieldsOnlyFilter(sobjectsService.getSObject(type, id)));
+        map.put("record", FilterRichSObjectsByFields.POPULATED_FIELDS_ONLY(sobjectsService.getSObject(type, id)));
         return "viewSObjectRecord";
     }
 
     @RequestMapping("{type}/{id}/e")
     public String editSObjectRecord(@PathVariable("type") String type, @PathVariable("id") String id, Map<String, Object> map) {
-        map.put("record", new UpdateableFieldsOnlyFilter(sobjectsService.getSObject(type, id)));
+        map.put("record", FilterRichSObjectsByFields.UPDATEABLE_FIELDS_ONLY(sobjectsService.getSObject(type, id)));
         return "editSObjectRecord";
     }
 

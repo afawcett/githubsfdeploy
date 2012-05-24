@@ -1,16 +1,19 @@
 package com.example.model;
 
+import java.util.Iterator;
+
 /**
  * @author Ryan Brainard
  */
-public class UpdateableFieldsOnlyFilter extends AbstractRichSObjectFieldIteratorFilter {
+public class UpdateableFieldsOnlyFilter extends IteratorFilter<RichSObject.RichField> {
 
-    public UpdateableFieldsOnlyFilter(RichSObject wrapped) {
-        super(wrapped);
+    public UpdateableFieldsOnlyFilter(Iterator<RichSObject.RichField> filteree) {
+        super(filteree);
     }
 
     @Override
-    boolean canBeNext(RichField maybeNext) {
+    boolean canBeNext(RichSObject.RichField maybeNext) {
         return maybeNext.getMetadata().isUpdateable();
     }
+
 }
