@@ -39,12 +39,17 @@
             <div class="page-header">
                 <h1>${record.metadata.label}: ${record.get("Name").value}</h1>
             </div>
-
-            <table class="table table-striped table-condensed">
-            <c:forEach items="${record.fields}" var="field">
-                <tr><td>${field.metadata.label}</td><td>${field.value}</td></tr>
-            </c:forEach>
-            </table>
+            <form method="POST" action="">
+                <table class="table table-striped table-condensed">
+                    <c:forEach items="${record.fields}" var="field">
+                        <tr>
+                            <td><label for="${field.metadata.name}"><c:out value="${field.metadata.label}"/></label></td>
+                            <td><input name="${field.metadata.name}" value="<c:out value="${field.value}"/>"/></td>
+                        </tr>
+                    </c:forEach>
+                </table>
+                <input type="submit" value="Save" class="btn btn-primary">
+            </form>
         </div>
     </div>
 </div>

@@ -37,12 +37,13 @@
     <div class="row">
         <div class="span8 offset2">
             <div class="page-header">
-                <h1>${type.label}</h1>
+                <h1><c:out value="${type.labelPlural}"/></h1>
             </div>
 
+            <h2>Recent Items</h2>
             <c:forEach items="${recentRecords}" var="record">
                 <ul>
-                    <li><a href="${record.metadata.name}/${record.get("id").value}">${record.get("name").value}</a></li>
+                    <li><a href="${record.metadata.name}/${record.get("id").value}"><c:out value="${record.get('name').value}"/></a></li>
                 </ul>
             </c:forEach>
         </div>

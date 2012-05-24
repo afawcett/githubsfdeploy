@@ -6,7 +6,6 @@ import com.force.api.DescribeSObject;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public interface RichSObjectsService {
     
@@ -18,4 +17,5 @@ public interface RichSObjectsService {
 
     DescribeSObject describeSObjectType(String type);
 
+    void deleteSObject(String type, String id);
 }

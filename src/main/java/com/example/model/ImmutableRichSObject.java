@@ -90,6 +90,7 @@ public class ImmutableRichSObject implements RichSObject {
 
         @Override
         public Object getValue() {
+            // TODO: add type casting based on types in metadata
             return record.get(fieldName);
         }
     }

@@ -43,6 +43,11 @@ public class RichSObjectsServiceImpl implements RichSObjectsService {
     }
 
     @Override
+    public void deleteSObject(String type, String id) {
+        getForceApi().deleteSObject(type, id);
+    }
+
+    @Override
     public RichSObject getSObject(String type, String id) {
         return new ImmutableRichSObject(describeSObjectType(type), getRawSObject(type, id));
     }

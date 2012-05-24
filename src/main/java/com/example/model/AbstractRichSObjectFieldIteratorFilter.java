@@ -8,9 +8,9 @@ import java.util.concurrent.ArrayBlockingQueue;
 /**
  * @author Ryan Brainard
  */
-public class PopulatedFieldsOnlyRichSObject extends RichSObjectWrapper {
+public abstract class AbstractRichSObjectFieldIteratorFilter extends RichSObjectWrapper {
 
-    public PopulatedFieldsOnlyRichSObject(RichSObject wrapped) {
+    public AbstractRichSObjectFieldIteratorFilter(RichSObject wrapped) {
         super(wrapped);
     }
 
@@ -29,7 +29,7 @@ public class PopulatedFieldsOnlyRichSObject extends RichSObjectWrapper {
 
                 while (filteree.hasNext()) {
                     RichField maybeNext = filteree.next();
-                    if (maybeNext.getValue() != null) {
+                    if (canBeNext(maybeNext)) {
                         nexts.offer(maybeNext);
                         return true;
                     }
@@ -52,4 +52,6 @@ public class PopulatedFieldsOnlyRichSObject extends RichSObjectWrapper {
             }
         };
     }
+    
+    abstract boolean canBeNext(RichField maybeNext);
 }

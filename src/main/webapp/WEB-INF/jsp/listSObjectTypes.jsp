@@ -40,9 +40,9 @@
                 <h1>SObjects</h1>
             </div>
 
-            <c:forEach items="${sobjects}" var="sobject">
+            <c:forEach items="${types}" var="type">
                 <ul>
-                    <li><a href="sobjects/${sobject.name}">${sobject.label}</a></li>
+                    <li><a href="sobjects/${type.name}"><c:out value="${type.label}"/></a></li>
                 </ul>
             </c:forEach>
         </div>
