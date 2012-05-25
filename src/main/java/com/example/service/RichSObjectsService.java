@@ -20,7 +20,9 @@ public interface RichSObjectsService {
 
     RichSObject newSObject(String type);
 
-    void updateSObject(String type, String id, Map<String, String> record);
+    RichSObject existingSObject(String type, Map<String, ?> record);
+
+    void updateSObject(String type, String id, Map<String, ?> record);
 
     String createSObject(String type, Map<String, String> record);
 

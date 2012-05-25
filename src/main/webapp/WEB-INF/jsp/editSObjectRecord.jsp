@@ -7,6 +7,11 @@
             <div class="page-header">
                 <h1>${record.metadata.label}: ${record.get("Name").value}</h1>
             </div>
+
+            <c:if test="${error != null}">
+                <div class="alert">${error}</div>
+            </c:if>
+
             <form method="POST" action="">
                 <table class="table table-striped table-condensed">
                     <c:forEach items="${record.fields}" var="field">

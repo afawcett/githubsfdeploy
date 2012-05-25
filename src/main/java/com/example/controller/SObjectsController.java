@@ -42,12 +42,18 @@ public class SObjectsController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "{type}/e")
-    public String createSObjectRecord(@PathVariable("type") String type, HttpServletRequest request) throws IOException {
+    public String createSObjectRecord(@PathVariable("type") String type, HttpServletRequest request, Map<String, Object> map) throws IOException {
         final ServletServerHttpRequest inputMessage = new ServletServerHttpRequest(request);
         final Map<String,String> formData = new FormHttpMessageConverter().read(null, inputMessage).toSingleValueMap();
-        final String id = sobjectsService.createSObject(type, formData);
 
-        return "redirect:" + id;
+        try {
+            final String id = sobjectsService.createSObject(type, formData);
+            return "redirect:" + id;
+        } catch (RuntimeException e) {
+            map.put("record", FilterRichSObjectsByFields.STRING_FIELDS_ONLY(FilterRichSObjectsByFields.CREATEABLE_FIELDS_ONLY(sobjectsService.existingSObject(type, formData))));
+            map.put("error", e.getMessage()); // TODO: better looking error
+            return "editSObjectRecord";
+        }
     }
 
     @RequestMapping("{type}/{id}")
@@ -63,12 +69,18 @@ public class SObjectsController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "{type}/{id}/e")
-    public String updateSObjectRecord(@PathVariable("type") String type, @PathVariable("id") String id, HttpServletRequest request) throws IOException {
+    public String updateSObjectRecord(@PathVariable("type") String type, @PathVariable("id") String id, HttpServletRequest request, Map<String, Object> map) throws IOException {
         final ServletServerHttpRequest inputMessage = new ServletServerHttpRequest(request);
         final Map<String,String> formData = new FormHttpMessageConverter().read(null, inputMessage).toSingleValueMap();
-        sobjectsService.updateSObject(type, id, formData);
 
-        return "redirect:../" + id;
+        try {
+            sobjectsService.updateSObject(type, id, formData);
+            return "redirect:../" + id;
+        } catch (RuntimeException e) {
+            map.put("record", FilterRichSObjectsByFields.STRING_FIELDS_ONLY(FilterRichSObjectsByFields.UPDATEABLE_FIELDS_ONLY(sobjectsService.existingSObject(type, formData))));
+            map.put("error", e.getMessage()); // TODO: better looking error
+            return "editSObjectRecord";
+        }
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "{type}/{id}")

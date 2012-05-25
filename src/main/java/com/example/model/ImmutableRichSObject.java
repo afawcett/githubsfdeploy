@@ -14,15 +14,15 @@ public class ImmutableRichSObject implements RichSObject {
     private final Map<String, DescribeSObject.Field> indexedFieldMetadata;
     private final List<DescribeSObject.Field> sortedFieldMetadata;
 
-    public ImmutableRichSObject(DescribeSObject metadata, Map<String, Object> record) {
+    public ImmutableRichSObject(DescribeSObject metadata, Map<String, ?> record) {
         this(metadata, record, ORDER_BY_FIELD_LABEL);
     }
 
-    public ImmutableRichSObject(DescribeSObject metadata, Map<String, Object> record, Comparator<DescribeSObject.Field> sortFieldsBy) {
+    public ImmutableRichSObject(DescribeSObject metadata, Map<String, ?> record, Comparator<DescribeSObject.Field> sortFieldsBy) {
         this.metadata = metadata;
 
         final Map<String, Object> tmpRecord = new HashMap<String, Object>(record.size());
-        for (Map.Entry<String, Object> field : record.entrySet()) {
+        for (Map.Entry<String, ?> field : record.entrySet()) {
             tmpRecord.put(field.getKey().toUpperCase(), field.getValue());
         }
         this.record = Collections.unmodifiableMap(tmpRecord);
