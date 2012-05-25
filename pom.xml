@@ -14,8 +14,8 @@
     <repositories>
         <repository>
             <id>force-rest-api</id>
-            <name>force-rest-api repository on GitHub</name>
-            <url>http://jesperfj.github.com/force-rest-api/repository/</url>
+            <name>temp force-rest-api repository on ryanbrainard's GitHub</name>
+            <url>https://raw.github.com/ryanbrainard/repo/master/</url>
         </repository>
     </repositories>
 
