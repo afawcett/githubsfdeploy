@@ -198,7 +198,7 @@
             <ol>
               <li>Open <code>listSObjectTypes.jsp</code></li>
               <li>Display the list of objects by their plural label instead of their standard, singular label
-                  by replacing <code>type.label</code> on line 13 with <code>type.pluralLabel</code></li>
+                  by replacing <code>type.label</code> on line 13 with <code>type.labelPlural</code></li>
             </ol>
 
             <h2>Step 5. Deploy to Heroku</h2>
@@ -289,7 +289,7 @@ Authentication successful.</pre>
             <ol>
               <li>Open <code>src/main/java/com/example/PersonServiceImpl.java in your favorite editor</code></li>
               <li>Display the list of objects by their plural label instead of their standard, singular label
-                  by replacing <code>type.label</code> on line 13 with <code>type.pluralLabel</code></li>
+                  by replacing <code>type.label</code> on line 13 with <code>type.labelPlural</code></li>
             </ol>
 
             <h2>Step 5. Make sure the app still compiles</h2>

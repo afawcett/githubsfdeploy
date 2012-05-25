@@ -4,6 +4,7 @@
         <div class="span8 offset2">
             <div class="page-header">
                 <h1><c:out value="${type.labelPlural}"/></h1>
+                <h6><a href="../sobjects" style="color: gray;">Back to My Objects</a></h6>
             </div>
 
             <div class="btn-group">
