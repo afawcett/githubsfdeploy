@@ -83,7 +83,6 @@ public class ImmutableRichSObject implements RichSObject {
             this.fieldName = fieldName;
         }
 
-
         @Override
         public RichSObject getParent() {
             return ImmutableRichSObject.this;

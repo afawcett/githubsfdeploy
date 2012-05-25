@@ -17,6 +17,13 @@
     <link href="http://heroku.github.com/template-app-bootstrap/heroku.css" rel="stylesheet">
     <!-- /// -->
 
+    <style>
+        .btn-group {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+
 </head>
 
 <body>

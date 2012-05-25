@@ -1,5 +1,3 @@
-<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <jsp:include page="header.jsp"/>
     <div class="row">
@@ -8,7 +6,7 @@
                 <h1>${record.metadata.label}: ${record.get("name").value}</h1>
             </div>
 
-            <div class="btn-group" style="margin: 10px">
+            <div class="btn-group">
                 <a href="${record.get("id").value}/e" class="btn">Edit</a>
                 <a onclick="SFDC.deleteSObjectRecord('${record.metadata.name}', '${record.get("id").value}', '${record.get("name").value}')" class="btn">Delete</a>
             </div>
@@ -23,8 +21,6 @@
             </table>
         </div>
     </div>
-
-<script src="http://twitter.github.com/bootstrap/assets/js/jquery.js"></script>
 
 <script type="text/javascript">
     var SFDC = {
