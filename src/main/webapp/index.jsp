@@ -3,7 +3,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Spring MVC and Hibernate Template</title>
+    <title>Spring MVC Template for Salesforce</title>
 
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -73,11 +73,13 @@
           <h1 class="alert alert-success">Your app is ready!</h1>
           
           <div class="page-header">
-            <h1>Get started with your Spring MVC and Hibernate Application</h1>
+            <h1>Get started with your Spring MVC Application for Salesforce</h1>
           </div>
           
           <div style="margin-bottom: 20px">
-            This is a template for a web application that uses Spring MVC and Hibernate. The sample code is a simple CRUD page that manipulates records for a single model object. To try it out go to the <a href="/people/">people page</a>. Then use Eclipse or the Command Line to deploy some changes. 
+            This is a template for a Spring MVC web application to work with data from Salesforce.
+            The sample code is a dynamic CRUD application that allows users to create, read, edit, and delete.
+            To try it out go to the <a href="/sfdc/sobjects">My Objects</a> page. Then use Eclipse or the Command Line to deploy some changes.
           </div>
           
         <ul id="tab" class="nav nav-tabs">
@@ -194,13 +196,9 @@
 
             <h2>Step 4. Makes some changes to the app</h2>
             <ol>
-              <li>Open <code>PersonServiceImpl.java</code></li>
-              <li>Query the people in alphabetical order by replacing line 29 with the following two lines:
-                <pre class="once language-java">
-Root&lt;Person&gt; from = c.from(Person.class);
-c.orderBy(em.getCriteriaBuilder().asc(from.get("lastName")));
-                </pre>
-              </li>
+              <li>Open <code>listSObjectTypes.jsp</code></li>
+              <li>Display the list of objects by their plural label instead of their standard, singular label
+                  by replacing <code>type.label</code> on line 13 with <code>type.pluralLabel</code></li>
             </ol>
 
             <h2>Step 5. Deploy to Heroku</h2>
@@ -246,7 +244,7 @@ c.orderBy(em.getCriteriaBuilder().asc(from.get("lastName")));
             <div class="hero-unit">
               <h1>Done!</h1>
               <p>You've just cloned, modified, and deployed a brand new app.</p>
-              <a href="/people/" class="btn btn-primary btn-large">See your changes</a>
+              <a href="/sfdc/sobjects" class="btn btn-primary btn-large">See your changes</a>
                 
               <p style="margin-top: 20px">Learn more at the   
               <a href="http://devcenter.heroku.com/categories/java">Heroku Dev Center</a></p>
@@ -290,12 +288,8 @@ Authentication successful.</pre>
             <h2>Step 4. Makes some changes to the app</h2>
             <ol>
               <li>Open <code>src/main/java/com/example/PersonServiceImpl.java in your favorite editor</code></li>
-              <li>Query the people in alphabetical order by replacing line 29 with the following two lines:
-                <pre class="once language-java">
-Root&lt;Person&gt; from = c.from(Person.class);
-c.orderBy(em.getCriteriaBuilder().asc(from.get("lastName")));
-                </pre>
-              </li>
+              <li>Display the list of objects by their plural label instead of their standard, singular label
+                  by replacing <code>type.label</code> on line 13 with <code>type.pluralLabel</code></li>
             </ol>
 
             <h2>Step 5. Make sure the app still compiles</h2>
@@ -310,7 +304,7 @@ c.orderBy(em.getCriteriaBuilder().asc(from.get("lastName")));
             <div class="hero-unit">
               <h1>Done!</h1>
               <p>You've just cloned, modified, and deployed a brand new app.</p>
-              <a href="/people/" class="btn btn-primary btn-large">See your changes</a>
+              <a href="/sfdc/sobjects" class="btn btn-primary btn-large">See your changes</a>
                 
               <p style="margin-top: 20px">Learn more at the   
               <a href="http://devcenter.heroku.com/categories/java">Heroku Dev Center</a></p>

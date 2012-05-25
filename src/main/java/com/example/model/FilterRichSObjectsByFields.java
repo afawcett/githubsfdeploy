@@ -19,7 +19,7 @@ public class FilterRichSObjectsByFields extends RichSObjectWrapper {
         return fieldFilterIterator;
     }
 
-    public static FilterRichSObjectsByFields CREATEABLE_FIELDS_ONLY(RichSObject wrapped) {
+    public static FilterRichSObjectsByFields CreateableFieldsOnly(RichSObject wrapped) {
         return new FilterRichSObjectsByFields(wrapped, new IteratorFilter<RichField>(wrapped.getFields()) {
             @Override
             boolean canBeNext(RichField maybeNext) {
@@ -28,7 +28,7 @@ public class FilterRichSObjectsByFields extends RichSObjectWrapper {
         });
     }
 
-    public static FilterRichSObjectsByFields UPDATEABLE_FIELDS_ONLY(RichSObject wrapped) {
+    public static FilterRichSObjectsByFields UpdateableFieldsOnly(RichSObject wrapped) {
         return new FilterRichSObjectsByFields(wrapped, new IteratorFilter<RichField>(wrapped.getFields()) {
             @Override
             boolean canBeNext(RichField maybeNext) {
@@ -37,7 +37,7 @@ public class FilterRichSObjectsByFields extends RichSObjectWrapper {
         });
     }
 
-    public static FilterRichSObjectsByFields POPULATED_FIELDS_ONLY(RichSObject wrapped) {
+    public static FilterRichSObjectsByFields PopulatedFieldsOnly(RichSObject wrapped) {
         return new FilterRichSObjectsByFields(wrapped, new IteratorFilter<RichField>(wrapped.getFields()) {
             @Override
             boolean canBeNext(RichField maybeNext) {
@@ -46,7 +46,7 @@ public class FilterRichSObjectsByFields extends RichSObjectWrapper {
         });
     }
 
-    public static FilterRichSObjectsByFields STRING_FIELDS_ONLY(RichSObject wrapped) {
+    public static FilterRichSObjectsByFields StringFieldsOnly(RichSObject wrapped) {
         return new FilterRichSObjectsByFields(wrapped, new IteratorFilter<RichField>(wrapped.getFields()) {
             @Override
             boolean canBeNext(RichField maybeNext) {

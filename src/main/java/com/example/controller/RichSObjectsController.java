@@ -1,6 +1,5 @@
 package com.example.controller;
 
-import com.example.model.FilterRichSObjectsByFields;
 import com.example.model.FullCrudTypesOnlyFilter;
 import com.example.service.RichSObjectsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,29 +14,31 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Map;
 
+import static com.example.model.FilterRichSObjectsByFields.*;
+
 @Controller
 @RequestMapping("/sobjects")
-public class SObjectsController {
+public class RichSObjectsController {
 
     @Autowired
-    private RichSObjectsService sobjectsService;
+    private RichSObjectsService service;
 
     @RequestMapping("")
     public String indexAllSObjects(Map<String, Object> map) {
-        map.put("types", new FullCrudTypesOnlyFilter(sobjectsService.listSObjectTypes().iterator()));
+        map.put("types", new FullCrudTypesOnlyFilter(service.listSObjectTypes().iterator()));
         return "listSObjectTypes";
     }
 
     @RequestMapping("{type}")
     public String indexSObject(@PathVariable("type") String type, Map<String, Object> map) {
-        map.put("type", sobjectsService.describeSObjectType(type));
-        map.put("recentRecords", sobjectsService.getRecentItems(type));
+        map.put("type", service.describeSObjectType(type));
+        map.put("recentRecords", service.getRecentItems(type));
         return "listRecentSObjectRecords";
     }
 
     @RequestMapping("{type}/e")
     public String newSObjectRecord(@PathVariable("type") String type, Map<String, Object> map) {
-        map.put("record", FilterRichSObjectsByFields.STRING_FIELDS_ONLY(FilterRichSObjectsByFields.CREATEABLE_FIELDS_ONLY(sobjectsService.newSObject(type))));
+        map.put("record", StringFieldsOnly(CreateableFieldsOnly(service.newSObject(type))));
         return "editSObjectRecord";
     }
 
@@ -47,10 +48,10 @@ public class SObjectsController {
         final Map<String,String> formData = new FormHttpMessageConverter().read(null, inputMessage).toSingleValueMap();
 
         try {
-            final String id = sobjectsService.createSObject(type, formData);
+            final String id = service.createSObject(type, formData);
             return "redirect:" + id;
         } catch (RuntimeException e) {
-            map.put("record", FilterRichSObjectsByFields.STRING_FIELDS_ONLY(FilterRichSObjectsByFields.CREATEABLE_FIELDS_ONLY(sobjectsService.existingSObject(type, formData))));
+            map.put("record", StringFieldsOnly(CreateableFieldsOnly(service.existingSObject(type, formData))));
             map.put("error", e.getMessage()); // TODO: better looking error
             return "editSObjectRecord";
         }
@@ -58,13 +59,13 @@ public class SObjectsController {
 
     @RequestMapping("{type}/{id}")
     public String readSObjectRecord(@PathVariable("type") String type, @PathVariable("id") String id, Map<String, Object> map) {
-        map.put("record", FilterRichSObjectsByFields.POPULATED_FIELDS_ONLY(sobjectsService.getSObject(type, id)));
+        map.put("record", PopulatedFieldsOnly(service.getSObject(type, id)));
         return "viewSObjectRecord";
     }
 
     @RequestMapping("{type}/{id}/e")
     public String editSObjectRecord(@PathVariable("type") String type, @PathVariable("id") String id, Map<String, Object> map) {
-        map.put("record", FilterRichSObjectsByFields.STRING_FIELDS_ONLY(FilterRichSObjectsByFields.UPDATEABLE_FIELDS_ONLY(sobjectsService.getSObject(type, id))));
+        map.put("record", StringFieldsOnly(UpdateableFieldsOnly(service.getSObject(type, id))));
         return "editSObjectRecord";
     }
 
@@ -74,10 +75,10 @@ public class SObjectsController {
         final Map<String,String> formData = new FormHttpMessageConverter().read(null, inputMessage).toSingleValueMap();
 
         try {
-            sobjectsService.updateSObject(type, id, formData);
+            service.updateSObject(type, id, formData);
             return "redirect:../" + id;
         } catch (RuntimeException e) {
-            map.put("record", FilterRichSObjectsByFields.STRING_FIELDS_ONLY(FilterRichSObjectsByFields.UPDATEABLE_FIELDS_ONLY(sobjectsService.existingSObject(type, formData))));
+            map.put("record", StringFieldsOnly(UpdateableFieldsOnly(service.existingSObject(type, formData))));
             map.put("error", e.getMessage()); // TODO: better looking error
             return "editSObjectRecord";
         }
@@ -85,7 +86,7 @@ public class SObjectsController {
 
     @RequestMapping(method = RequestMethod.DELETE, value = "{type}/{id}")
     public String deleteSObjectRecord(@PathVariable("type") String type, @PathVariable("id") String id, Map<String, Object> map) {
-        sobjectsService.deleteSObject(type, id);
+        service.deleteSObject(type, id);
         return "OK";
     }
 }

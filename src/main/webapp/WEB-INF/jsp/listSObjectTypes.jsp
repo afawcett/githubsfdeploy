@@ -5,7 +5,7 @@
     <div class="row">
         <div class="span8 offset2">
             <div class="page-header">
-                <h1>SObjects</h1>
+                <h1>My Objects</h1>
             </div>
 
             <c:forEach items="${types}" var="type">
