@@ -7,9 +7,9 @@ import java.util.Iterator;
 /**
  * @author Ryan Brainard
  */
-abstract class RichSObjectWrapper implements RichSObject {
+public abstract class RichSObjectWrapper implements RichSObject {
 
-    public final RichSObject wrapped;
+    protected final RichSObject wrapped;
 
     public RichSObjectWrapper(RichSObject wrapped) {
         this.wrapped = wrapped;
