@@ -13,8 +13,8 @@
 
     <repositories>
         <repository>
-            <id>force-rest-api</id>
-            <name>temp force-rest-api repository on ryanbrainard's GitHub</name>
+            <id>com.github.ryanbrainard.repo</id>
+            <name>temp repository on ryanbrainard's GitHub</name>
             <url>https://raw.github.com/ryanbrainard/repo/master/</url>
         </repository>
     </repositories>
@@ -42,9 +42,9 @@
             <version>1.2</version>
         </dependency>
         <dependency>
-            <groupId>com.force.api</groupId>
-            <artifactId>force-rest-api</artifactId>
-            <version>0.0.19-SNAPSHOT</version>
+            <groupId>com.github.ryanbrainard</groupId>
+            <artifactId>richsobjects-jersey-client</artifactId>
+            <version>0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.force.sdk</groupId>

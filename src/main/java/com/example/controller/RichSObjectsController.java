@@ -1,8 +1,8 @@
 package com.example.controller;
 
-import com.example.model.FullCrudTypesOnlyFilter;
-import com.example.service.RichSObjectsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.github.ryanbrainard.richsobjects.filters.FullCrudTypesOnlyFilter;
+import com.github.ryanbrainard.richsobjects.service.RichSObjectsService;
+import com.github.ryanbrainard.richsobjects.service.RichSObjectsServiceImpl;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.stereotype.Controller;
@@ -14,14 +14,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.example.model.FilterRichSObjectsByFields.*;
+import static com.github.ryanbrainard.richsobjects.filters.FilterRichSObjectsByFields.*;
 
 @Controller
 @RequestMapping("/sobjects")
 public class RichSObjectsController {
 
-    @Autowired
-    private RichSObjectsService service;
+    private RichSObjectsService service = new RichSObjectsServiceImpl();
 
     @RequestMapping("")
     public String indexAllSObjects(Map<String, Object> map) {
