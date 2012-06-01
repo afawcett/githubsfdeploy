@@ -23,6 +23,9 @@
         <property name="redirectHttp10Compatible" value="false" />
     </bean>
 
+    <!--suppress SpringModelInspection -->
+    <mvc:resources mapping="/resources/**" location="/resources/" />
+
     <fss:oauth>
         <fss:oauthInfo endpoint="http://login.salesforce.com"
                        oauth-key="#{systemEnvironment['SFDC_OAUTH_CLIENT_ID']}"

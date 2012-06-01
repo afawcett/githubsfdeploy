@@ -8,15 +8,15 @@
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
-    <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
-    <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.css">
+    <link href="/resources/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/resources/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css">
+    <link href="" rel="stylesheet" type="text/css">
 
     <!--
     IMPORTANT:
     This is Heroku specific styling. Remove to customize.
     -->
-    <link href="http://heroku.github.com/template-app-bootstrap/heroku.css" rel="stylesheet">
+    <link href="/resources/css/heroku.css" rel="stylesheet">
     <style type="text/css">
       .instructions { display: none; }
       .instructions li { margin-bottom: 10px; }
@@ -317,12 +317,8 @@ Authentication successful.</pre>
   <!-- end tab content -->  
   </div>
 
-
-
-
-
-    <script src="http://twitter.github.com/bootstrap/assets/js/jquery.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-modal.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-tab.js"></script>
+    <script src="/resources/js/jquery-1.7.1.min.js"></script>
+    <script src="/resources/js/bootstrap-modal.js"></script>
+    <script src="/resources/js/bootstrap-tab.js"></script>
   </body>
 </html>

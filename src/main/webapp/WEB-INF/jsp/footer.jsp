@@ -1,4 +1,4 @@
 </div>
-<script src="http://twitter.github.com/bootstrap/assets/js/jquery.js"></script>
+<script src="/resources/js/jquery-1.7.1.min.js"></script>
 </body>
 </html>
