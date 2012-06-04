@@ -1,8 +1,8 @@
 package com.example.controller;
 
 import com.github.ryanbrainard.richsobjects.filters.FullCrudTypesOnlyFilter;
-import com.github.ryanbrainard.richsobjects.service.RichSObjectsService;
-import com.github.ryanbrainard.richsobjects.service.RichSObjectsServiceImpl;
+import com.github.ryanbrainard.richsobjects.RichSObjectsService;
+import com.github.ryanbrainard.richsobjects.RichSObjectsServiceImpl;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.stereotype.Controller;

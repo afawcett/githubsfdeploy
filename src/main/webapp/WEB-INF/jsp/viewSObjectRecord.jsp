@@ -16,7 +16,7 @@
             <c:forEach items="${record.fields}" var="field">
                 <tr>
                     <td><c:out value="${field.metadata.label}"/></td>
-                    <td><c:out value="${field.value}"/></td>
+                    <td><c:out value="${field.asAnyWithNameRef()}"/></td>
                 </tr>
             </c:forEach>
             </table>
