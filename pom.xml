@@ -11,14 +11,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>com.github.ryanbrainard.repo</id>
-            <name>temp repository on ryanbrainard's GitHub</name>
-            <url>https://raw.github.com/ryanbrainard/repo/master/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -43,13 +35,18 @@
         </dependency>
         <dependency>
             <groupId>com.github.ryanbrainard</groupId>
-            <artifactId>richsobjects</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <artifactId>richsobjects-core</artifactId>
+            <version>0.1-BETA</version>
         </dependency>
         <dependency>
             <groupId>com.github.ryanbrainard</groupId>
             <artifactId>richsobjects-jersey-client</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>0.1-BETA</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ryanbrainard</groupId>
+            <artifactId>richsobjects-simple-cache</artifactId>
+            <version>0.1-BETA</version>
         </dependency>
         <dependency>
             <groupId>com.force.sdk</groupId>
