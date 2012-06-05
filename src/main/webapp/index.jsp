@@ -287,7 +287,7 @@ Authentication successful.</pre>
 
             <h2>Step 4. Makes some changes to the app</h2>
             <ol>
-              <li>Open <code>src/main/java/com/example/PersonServiceImpl.java in your favorite editor</code></li>
+              <li>Open <code>listSObjectTypes.jsp</code> in your favorite editor</li>
               <li>Display the list of objects by their plural label instead of their standard, singular label
                   by replacing <code>type.label</code> on line 13 with <code>type.labelPlural</code></li>
             </ol>
