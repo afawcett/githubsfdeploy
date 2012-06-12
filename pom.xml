@@ -36,17 +36,17 @@
         <dependency>
             <groupId>com.github.ryanbrainard</groupId>
             <artifactId>richsobjects-core</artifactId>
-            <version>0.1-BETA</version>
+            <version>0.2-BETA-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.github.ryanbrainard</groupId>
             <artifactId>richsobjects-jersey-client</artifactId>
-            <version>0.1-BETA</version>
+            <version>0.2-BETA-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.github.ryanbrainard</groupId>
-            <artifactId>richsobjects-simple-cache</artifactId>
-            <version>0.1-BETA</version>
+            <artifactId>richsobjects-memcached</artifactId>
+            <version>0.2-BETA-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.force.sdk</groupId>
