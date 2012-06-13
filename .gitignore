@@ -5,3 +5,4 @@
 /tomcat.*
 /.idea
 /*.iml
+.env
