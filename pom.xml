@@ -8,6 +8,9 @@
 
     <properties>
         <org.springframework.version>3.1.1.RELEASE</org.springframework.version>
+        <org.slf4j.version>1.6.2</org.slf4j.version>
+        <com.github.ryanbrainard.richsobjects.version>0.2-BETA-SNAPSHOT</com.github.ryanbrainard.richsobjects.version>
+        <com.force.sdk.version>22.0.8-BETA</com.force.sdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -28,6 +31,18 @@
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${org.springframework.version}</version>
+            <exclusions>
+                <!-- Exclude Commons Logging in favor of SLF4j -->
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${org.springframework.version}</version>
         </dependency>
@@ -44,32 +59,49 @@
         <dependency>
             <groupId>com.github.ryanbrainard</groupId>
             <artifactId>richsobjects-core</artifactId>
-            <version>0.2-BETA-SNAPSHOT</version>
+            <version>${com.github.ryanbrainard.richsobjects.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.ryanbrainard</groupId>
             <artifactId>richsobjects-jersey-client</artifactId>
-            <version>0.2-BETA-SNAPSHOT</version>
+            <version>${com.github.ryanbrainard.richsobjects.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.ryanbrainard</groupId>
             <artifactId>richsobjects-memcached</artifactId>
-            <version>0.2-BETA-SNAPSHOT</version>
+            <version>${com.github.ryanbrainard.richsobjects.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ryanbrainard</groupId>
+            <artifactId>richsobjects-simple-cache</artifactId>
+            <version>${com.github.ryanbrainard.richsobjects.version}</version>
         </dependency>
         <dependency>
             <groupId>com.force.sdk</groupId>
             <artifactId>force-oauth</artifactId>
-            <version>22.0.8-BETA</version>
+            <version>${com.force.sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>com.force.sdk</groupId>
             <artifactId>force-springsecurity</artifactId>
-            <version>22.0.8-BETA</version>
+            <version>${com.force.sdk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${org.slf4j.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${org.slf4j.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.github.jsimone</groupId>
             <artifactId>webapp-runner</artifactId>
-            <version>7.0.22.3</version>
+            <version>7.0.27.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
