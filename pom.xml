@@ -63,17 +63,17 @@
         </dependency>
         <dependency>
             <groupId>com.github.ryanbrainard</groupId>
-            <artifactId>richsobjects-jersey-client</artifactId>
+            <artifactId>richsobjects-api-jersey-client</artifactId>
             <version>${com.github.ryanbrainard.richsobjects.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.ryanbrainard</groupId>
-            <artifactId>richsobjects-memcached</artifactId>
+            <artifactId>richsobjects-cache-memcached</artifactId>
             <version>${com.github.ryanbrainard.richsobjects.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.ryanbrainard</groupId>
-            <artifactId>richsobjects-simple-cache</artifactId>
+            <artifactId>richsobjects-cache-simple</artifactId>
             <version>${com.github.ryanbrainard.richsobjects.version}</version>
         </dependency>
         <dependency>
@@ -101,7 +101,7 @@
         <dependency>
             <groupId>com.github.jsimone</groupId>
             <artifactId>webapp-runner</artifactId>
-            <version>7.0.27.1</version>
+            <version>7.0.22.3</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

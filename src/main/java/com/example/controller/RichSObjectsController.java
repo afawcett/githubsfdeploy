@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.github.ryanbrainard.richsobjects.RichSObject;
 import com.github.ryanbrainard.richsobjects.filters.FullCrudTypesOnlyFilter;
 import com.github.ryanbrainard.richsobjects.RichSObjectsService;
 import com.github.ryanbrainard.richsobjects.RichSObjectsServiceImpl;
@@ -24,20 +25,20 @@ public class RichSObjectsController {
 
     @RequestMapping("")
     public String indexAllSObjects(Map<String, Object> map) {
-        map.put("types", new FullCrudTypesOnlyFilter(service.listSObjectTypes().iterator()));
+        map.put("types", new FullCrudTypesOnlyFilter(service.types().iterator()));
         return "listSObjectTypes";
     }
 
     @RequestMapping("{type}")
     public String indexSObject(@PathVariable("type") String type, Map<String, Object> map) {
-        map.put("type", service.describeSObjectType(type));
-        map.put("recentRecords", service.getRecentItems(type));
+        map.put("type", service.describe(type));
+        map.put("recentRecords", service.recentItems(type));
         return "listRecentSObjectRecords";
     }
 
     @RequestMapping("{type}/e")
     public String newSObjectRecord(@PathVariable("type") String type, Map<String, Object> map) {
-        map.put("record", StringFieldsOnly(CreateableFieldsOnly(service.newSObject(type))));
+        map.put("record", StringFieldsOnly(CreateableFieldsOnly(service.of(type))));
         return "editSObjectRecord";
     }
 
@@ -45,12 +46,13 @@ public class RichSObjectsController {
     public String createSObjectRecord(@PathVariable("type") String type, HttpServletRequest request, Map<String, Object> map) throws IOException {
         final ServletServerHttpRequest inputMessage = new ServletServerHttpRequest(request);
         final Map<String,String> formData = new FormHttpMessageConverter().read(null, inputMessage).toSingleValueMap();
-
+        final RichSObject record = service.of(type, formData);
+        
         try {
-            final String id = service.createSObject(type, formData);
-            return "redirect:" + id;
+            final RichSObject saved = service.insert(record);
+            return "redirect:" + saved.getField("id").asString();
         } catch (RuntimeException e) {
-            map.put("record", StringFieldsOnly(CreateableFieldsOnly(service.existingSObject(type, formData))));
+            map.put("record", StringFieldsOnly(CreateableFieldsOnly(record)));
             map.put("error", e.getMessage()); // TODO: better looking error
             return "editSObjectRecord";
         }
@@ -58,13 +60,13 @@ public class RichSObjectsController {
 
     @RequestMapping("{type}/{id}")
     public String readSObjectRecord(@PathVariable("type") String type, @PathVariable("id") String id, Map<String, Object> map) {
-        map.put("record", PopulatedFieldsOnly(service.getSObject(type, id)));
+        map.put("record", PopulatedFieldsOnly(service.fetch(type, id)));
         return "viewSObjectRecord";
     }
 
     @RequestMapping("{type}/{id}/e")
     public String editSObjectRecord(@PathVariable("type") String type, @PathVariable("id") String id, Map<String, Object> map) {
-        map.put("record", StringFieldsOnly(UpdateableFieldsOnly(service.getSObject(type, id))));
+        map.put("record", StringFieldsOnly(UpdateableFieldsOnly(service.fetch(type, id))));
         return "editSObjectRecord";
     }
 
@@ -72,12 +74,13 @@ public class RichSObjectsController {
     public String updateSObjectRecord(@PathVariable("type") String type, @PathVariable("id") String id, HttpServletRequest request, Map<String, Object> map) throws IOException {
         final ServletServerHttpRequest inputMessage = new ServletServerHttpRequest(request);
         final Map<String,String> formData = new FormHttpMessageConverter().read(null, inputMessage).toSingleValueMap();
-
+        final RichSObject record = service.of(type, formData).getField("id").setValue(id);
+        
         try {
-            service.updateSObject(type, id, formData);
+            service.update(record);
             return "redirect:../" + id;
         } catch (RuntimeException e) {
-            map.put("record", StringFieldsOnly(UpdateableFieldsOnly(service.existingSObject(type, formData))));
+            map.put("record", StringFieldsOnly(UpdateableFieldsOnly(record)));
             map.put("error", e.getMessage()); // TODO: better looking error
             return "editSObjectRecord";
         }
@@ -85,7 +88,7 @@ public class RichSObjectsController {
 
     @RequestMapping(method = RequestMethod.DELETE, value = "{type}/{id}")
     public String deleteSObjectRecord(@PathVariable("type") String type, @PathVariable("id") String id, Map<String, Object> map) {
-        service.deleteSObject(type, id);
+        service.delete(service.of(type, id));
         return "OK";
     }
 }

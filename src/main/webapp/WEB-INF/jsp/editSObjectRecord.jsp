@@ -5,8 +5,8 @@
             <div class="page-header">
                 <h1>
                     ${record.metadata.label}
-                    <c:if test="${record.get('name').value != null}">
-                        : ${record.get("name").value}
+                    <c:if test="${record.getField('name').value != null}">
+                        : ${record.getField("name").value}
                     </c:if>
                 </h1>
             </div>

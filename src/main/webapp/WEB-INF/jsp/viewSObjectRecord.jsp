@@ -3,13 +3,13 @@
     <div class="row">
         <div class="span8 offset2">
             <div class="page-header">
-                <h1>${record.metadata.label}: ${record.get("name").value}</h1>
+                <h1>${record.metadata.label}: ${record.getField("name").value}</h1>
                 <h6><a href="../${record.metadata.name}" style="color: gray;">Back to ${record.metadata.labelPlural}</a></h6>
             </div>
 
             <div class="btn-group">
-                <a href="${record.get("id").value}/e" class="btn">Edit</a>
-                <a onclick="SFDC.deleteSObjectRecord('${record.metadata.name}', '${record.get("id").value}', '${record.get("name").value}')" class="btn">Delete</a>
+                <a href="${record.getField("id").value}/e" class="btn">Edit</a>
+                <a onclick="SFDC.deleteSObjectRecord('${record.metadata.name}', '${record.getField("id").value}', '${record.getField("name").value}')" class="btn">Delete</a>
             </div>
 
             <table class="table table-striped table-condensed">

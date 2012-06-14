@@ -14,7 +14,7 @@
             <h2>Recent Items</h2>
             <c:forEach items="${recentRecords}" var="record">
                 <ul>
-                    <li><a href="${record.metadata.name}/${record.get("id").value}"><c:out value="${record.get('name').value}"/></a></li>
+                    <li><a href="${record.metadata.name}/${record.getField("id").value}"><c:out value="${record.getField('name').value}"/></a></li>
                 </ul>
             </c:forEach>
         </div>
