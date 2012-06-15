@@ -72,11 +72,6 @@
             <version>${com.github.ryanbrainard.richsobjects.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.ryanbrainard</groupId>
-            <artifactId>richsobjects-cache-simple</artifactId>
-            <version>${com.github.ryanbrainard.richsobjects.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.force.sdk</groupId>
             <artifactId>force-oauth</artifactId>
             <version>${com.force.sdk.version}</version>
