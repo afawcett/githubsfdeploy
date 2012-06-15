@@ -2,25 +2,17 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.example</groupId>
-    <artifactId>hello-java-spring-force_dot_com</artifactId>
+    <artifactId>template-sfdc-java-springmvc</artifactId>
     <packaging>war</packaging>
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
         <org.springframework.version>3.1.1.RELEASE</org.springframework.version>
         <org.slf4j.version>1.6.2</org.slf4j.version>
-        <com.github.ryanbrainard.richsobjects.version>0.2-BETA-SNAPSHOT</com.github.ryanbrainard.richsobjects.version>
+        <com.github.ryanbrainard.richsobjects.version>0.2-BETA</com.github.ryanbrainard.richsobjects.version>
         <com.force.sdk.version>22.0.8-BETA</com.force.sdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>sonatype-snapshots</id>
-            <snapshots/>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
