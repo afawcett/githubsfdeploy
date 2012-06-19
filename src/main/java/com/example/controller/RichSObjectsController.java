@@ -60,7 +60,7 @@ public class RichSObjectsController {
 
     @RequestMapping("{type}/{id}")
     public String readSObjectRecord(@PathVariable("type") String type, @PathVariable("id") String id, Map<String, Object> map) {
-        map.put("record", PopulatedFieldsOnly(service.fetch(type, id)));
+        map.put("record", StringFieldsOnly(PopulatedFieldsOnly(service.fetch(type, id))));
         return "viewSObjectRecord";
     }
 
