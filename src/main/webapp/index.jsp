@@ -78,7 +78,7 @@
           
           <div style="margin-bottom: 20px">
             This is a template for a Spring MVC web application to work with data from Salesforce.
-            The sample code is a dynamic CRUD application that allows users to create, read, edit, and delete.
+            The sample code is a dynamic CRUD application that allows users to create, read, edit, and delete any Salesforce object.
             To try it out go to the <a href="/sfdc/sobjects">My Objects</a> page. Then use Eclipse or the Command Line to deploy some changes.
           </div>
           
@@ -244,6 +244,7 @@
             <h2>Step 6. Provision an add-on</h2>
             <ol>
                 This app includes optional caching support for Memcache, which can greatly increase the performance when loading data from Salesforce.
+                Caching is optional, but highly recommended.
                 To add caching support, <a class="appAppendable" href="https://api.heroku.com/v3/resources/memcache?selected=">provision the Memcache add-on</a>.
                 Note, provisioning add-ons requires your <a href="https://api.heroku.com/verify">Heroku account be verified</a>.
             </ol>
@@ -311,6 +312,7 @@ Authentication successful.</pre>
             <h2>Step 7. Provision an add-on</h2>
             <ol>
                 This app includes optional caching support for Memcache, which can greatly increase the performance when loading data from Salesforce.
+                Caching is optional, but highly recommended.
                 To add caching support, provision the Memcache add-on:<p><code>heroku addons:add memcached</code></p>
                 Note, provisioning add-ons requires your <a href="https://api.heroku.com/verify">Heroku account be verified</a>.
             </ol>
