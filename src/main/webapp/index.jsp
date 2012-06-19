@@ -245,8 +245,8 @@
             <ol>
                 This app includes optional caching support for Memcache, which can greatly increase the performance when loading data from Salesforce.
                 Caching is optional, but highly recommended.
-                To add caching support, <a class="appAppendable" href="https://api.heroku.com/v3/resources/memcache?selected=">provision the Memcache add-on</a>.
-                Note, provisioning add-ons requires your <a href="https://api.heroku.com/verify">Heroku account be verified</a>.
+                To add caching support, <a class="appAppendable" href="https://api.heroku.com/v3/resources/memcache?selected=" target="_blank">provision the Memcache add-on</a>.
+                Note, provisioning add-ons requires your <a href="https://api.heroku.com/verify" target="_blank">Heroku account be verified</a>.
             </ol>
 
             <div class="hero-unit">
@@ -314,7 +314,7 @@ Authentication successful.</pre>
                 This app includes optional caching support for Memcache, which can greatly increase the performance when loading data from Salesforce.
                 Caching is optional, but highly recommended.
                 To add caching support, provision the Memcache add-on:<p><code>heroku addons:add memcached</code></p>
-                Note, provisioning add-ons requires your <a href="https://api.heroku.com/verify">Heroku account be verified</a>.
+                Note, provisioning add-ons requires your <a href="https://api.heroku.com/verify" target="_blank">Heroku account be verified</a>.
             </ol>
               
             <div class="hero-unit">
