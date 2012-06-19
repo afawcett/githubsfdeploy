@@ -56,7 +56,7 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a href="/" class="brand">Spring MVC and Hibernate Template</a>
+          <a href="/" class="brand">Spring MVC Template for Salesforce</a>
           <!--
           IMPORTANT:
           This is Heroku specific markup. Remove to customize.
@@ -241,6 +241,13 @@
               </li>
             </ol>
 
+            <h2>Step 6. Provision an add-on</h2>
+            <ol>
+                This app includes optional caching support for Memcache, which can greatly increase the performance when loading data from Salesforce.
+                To add caching support, <a class="appAppendable" href="https://api.heroku.com/v3/resources/memcache?selected=">provision the Memcache add-on</a>.
+                Note, provisioning add-ons requires your <a href="https://api.heroku.com/verify">Heroku account be verified</a>.
+            </ol>
+
             <div class="hero-unit">
               <h1>Done!</h1>
               <p>You've just cloned, modified, and deployed a brand new app.</p>
@@ -300,7 +307,14 @@ Authentication successful.</pre>
               <li><code>git commit -am "New changes to deploy"</code></li>
               <li><code>git push heroku master</code></li>
             </ol>
-
+              
+            <h2>Step 7. Provision an add-on</h2>
+            <ol>
+                This app includes optional caching support for Memcache, which can greatly increase the performance when loading data from Salesforce.
+                To add caching support, provision the Memcache add-on:<p><code>heroku addons:add memcached</code></p>
+                Note, provisioning add-ons requires your <a href="https://api.heroku.com/verify">Heroku account be verified</a>.
+            </ol>
+              
             <div class="hero-unit">
               <h1>Done!</h1>
               <p>You've just cloned, modified, and deployed a brand new app.</p>
@@ -320,5 +334,10 @@ Authentication successful.</pre>
     <script src="/resources/js/jquery-1.7.1.min.js"></script>
     <script src="/resources/js/bootstrap-modal.js"></script>
     <script src="/resources/js/bootstrap-tab.js"></script>
+    <script type="text/javascript">
+        $('.appAppendable').each(function() {
+            this.href += appname()
+        });
+    </script>
   </body>
 </html>
