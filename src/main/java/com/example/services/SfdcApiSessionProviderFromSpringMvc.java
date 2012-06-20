@@ -9,19 +9,13 @@ import com.github.ryanbrainard.richsobjects.api.client.SfdcApiSessionProvider;
 @SuppressWarnings("UnusedDeclaration")
 public class SfdcApiSessionProviderFromSpringMvc implements SfdcApiSessionProvider {
 
-    private final com.force.sdk.oauth.context.SecurityContext sc;
-
-    public SfdcApiSessionProviderFromSpringMvc() {
-        sc = ForceSecurityContextHolder.get(true);
-    }
-
     @Override
     public String getAccessToken() {
-        return sc.getSessionId();
+        return ForceSecurityContextHolder.get(true).getSessionId();
     }
 
     @Override
     public String getApiEndpoint() {
-        return sc.getEndPointHost();
+        return ForceSecurityContextHolder.get(true).getEndPointHost();
     }
 }
