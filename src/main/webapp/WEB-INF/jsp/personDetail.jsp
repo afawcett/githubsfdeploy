@@ -1,24 +1,27 @@
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <jsp:include page="header.jsp"/>
     <div class="row">
         <div class="span8 offset2">
-            <div class="page-header">
-                <h1>${record.metadata.label}: ${record.getField("name").value}</h1>
-                <h6><a href="../${record.metadata.name}" style="color: gray;">Back to ${record.metadata.labelPlural}</a></h6>
-            </div>
-
             <div class="btn-group">
                 <a href="${record.getField("id").value}/e" class="btn">Edit</a>
                 <a onclick="SFDC.deleteSObjectRecord('${record.metadata.name}', '${record.getField("id").value}', '${record.getField("name").value}')" class="btn">Delete</a>
             </div>
 
             <table class="table table-striped table-condensed">
-            <c:forEach items="${record.fields}" var="field">
                 <tr>
-                    <td><c:out value="${field.metadata.label}"/></td>
-                    <td><c:out value="${field.asAnyWithNameRef()}"/></td>
+                    <td><c:out value="${record.getField('firstname').metadata.label}"/></td>
+                    <td><c:out value="${record.getField('firstname').value}"/></td>
                 </tr>
-            </c:forEach>
+                <tr>
+                    <td><c:out value="${record.getField('lastname').metadata.label}"/></td>
+                    <td><c:out value="${record.getField('lastname').value}"/></td>
+                </tr>
+                <tr>
+                    <td><c:out value="${record.getField('email').metadata.label}"/></td>
+                    <td><c:out value="${record.getField('email').value}"/></td>
+                </tr>
             </table>
         </div>
     </div>
