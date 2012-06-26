@@ -78,8 +78,8 @@
           
           <div style="margin-bottom: 20px">
             This is a template for a Spring MVC web application to work with data from Salesforce.
-            The sample code is a dynamic CRUD application that allows users to create, read, edit, and delete any Salesforce object.
-            To try it out go to the <a href="/sfdc/sobjects">My Objects</a> page. Then use Eclipse or the Command Line to deploy some changes.
+            The sample code is a dynamic CRUD application that allows users to create, read, edit, and delete Contacts in their Salesforce Org.
+            To try it out go to the <a href="/sfdc/persons">Persons</a> page. Then use Eclipse or the Command Line to deploy some changes.
           </div>
           
         <ul id="tab" class="nav nav-tabs">
