@@ -51,7 +51,7 @@
                 'url': 'persons/'+id,
                 'type': 'DELETE',
                 'success': function(data, textStatus, jqXHR) {
-                    location.href = '../' + type
+                    location.href = '/sfdc/persons'
                 },
                 'error': function(jqXHR, textStatus, errorThrown) {
                     alert('Failed to delete record.');
