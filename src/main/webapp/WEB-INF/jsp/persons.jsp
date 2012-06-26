@@ -24,8 +24,9 @@
                             </td>
                             <td>${person.getField("email").value}</td>
                             <td>
-                            	<form action="delete/${person.getField("id").value}" method="post">
-                            		<input type="submit" class="btn btn-danger btn-mini" value="Delete"/>
+                            	
+                            	<a href="#" onClick="SFDC.deleteSObjectRecord('${person.metadata.name}', '${person.getField("id").value}', '${person.getField("name").value}')"
+                            		class="btn btn-danger btn-mini">Delete</a>
                             	</form>
                             </td>
                         </tr>
@@ -35,4 +36,26 @@
                 </table>
         </div>
     </div>
+    
+    
+    <script type="text/javascript">
+    var SFDC = {
+        deleteSObjectRecord: function(type, id, name) {
+            if (!confirm("Are you sure you want to delete '" +  name + "'?")) {
+                return false;
+            }
+
+            $.ajax({
+                'url': id,
+                'type': 'DELETE',
+                'success': function(data, textStatus, jqXHR) {
+                    location.href = '../' + type
+                },
+                'error': function(jqXHR, textStatus, errorThrown) {
+                    alert('Failed to delete record.');
+                }
+            })
+        }
+    };
+</script>
 <jsp:include page="footer.jsp"/>
