@@ -25,7 +25,9 @@
                             <td>${person.getField("email").value}</td>
                             <td>
                             	
-                            	<a href="#" onClick="SFDC.deleteSObjectRecord('${person.metadata.name}', '${person.getField("id").value}', '${person.getField("name").value}')"
+                            	<a href="#" onClick="SFDC.deleteSObjectRecord(	'${person.metadata.name}', 
+                            													'${person.getField("id").value}', 
+                            													'${person.getField("firstname").value} ${person.getField("lastname").value}')"
                             		class="btn btn-danger btn-mini">Delete</a>
                             	</form>
                             </td>
@@ -46,7 +48,7 @@
             }
 
             $.ajax({
-                'url': id,
+                'url': 'persons/'+id,
                 'type': 'DELETE',
                 'success': function(data, textStatus, jqXHR) {
                     location.href = '../' + type
