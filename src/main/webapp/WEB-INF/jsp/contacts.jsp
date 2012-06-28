@@ -15,19 +15,19 @@
                     </thead>
                     <tbody>
                     
-                    <c:forEach items="${personList}" var="person">
+                    <c:forEach items="${contactList}" var="contact">
                         <tr>
                             <td>
-                            	<a href="persons/${person.getField("id").value}">
-                            		${person.getField("lastname").value}, ${person.getField("firstname").value}
+                            	<a href="contacts/${contact.getField("id").value}">
+                            		${contact.getField("lastname").value}, ${contact.getField("firstname").value}
                             	</a>
                             </td>
-                            <td>${person.getField("email").value}</td>
+                            <td>${contact.getField("email").value}</td>
                             <td>
                             	
-                            	<a href="#" onClick="SFDC.deleteSObjectRecord(	'${person.metadata.name}', 
-                            													'${person.getField("id").value}', 
-                            													'${person.getField("firstname").value} ${person.getField("lastname").value}')"
+                            	<a href="#" onClick="SFDC.deleteSObjectRecord(	'${contact.metadata.name}', 
+                            													'${contact.getField("id").value}', 
+                            													'${contact.getField("firstname").value} ${contact.getField("lastname").value}')"
                             		class="btn btn-danger btn-mini">Delete</a>
                             	</form>
                             </td>
@@ -48,10 +48,10 @@
             }
 
             $.ajax({
-                'url': 'persons/'+id,
+                'url': 'contacts/'+id,
                 'type': 'DELETE',
                 'success': function(data, textStatus, jqXHR) {
-                    location.href = '/sfdc/persons'
+                    location.href = '/sfdc/contacts'
                 },
                 'error': function(jqXHR, textStatus, errorThrown) {
                     alert('Failed to delete record.');
