@@ -10,11 +10,11 @@ public class OAuthConfigChecker implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        if (System.getenv("SFDC_OAUTH_CLIENT_ID") == null || System.getenv("SFDC_OAUTH_CLIENT_SECRET") == null) {
-            final String appName = (servletRequest.getServerName().contains(".herokuapp.com"))
-                    ? servletRequest.getServerName().replace(".herokuapp.com", "")
-                    : (servletRequest.getServerName() + ":" + servletRequest.getServerPort());
-            ((HttpServletResponse)servletResponse).sendRedirect("https://agi.herokuapp.com/oauthConfig?app=" + appName + "&callbackUrl=/_auth");
+        //If the environment variables are not set, send them to a "error" page that will tell them to add this to 
+    	//their environment
+    	if (System.getenv("SFDC_OAUTH_CLIENT_ID") == null || System.getenv("SFDC_OAUTH_CLIENT_SECRET") == null) {
+            ((HttpServletResponse)servletResponse).sendRedirect("/sfdcSetup.html");
+            return;
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
