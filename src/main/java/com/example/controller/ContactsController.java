@@ -25,23 +25,23 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/contacts")
 public class ContactsController {
 
-    private RichSObjectsService service = new RichSObjectsServiceImpl();
+    private RichSObjectsService salesforceService = new RichSObjectsServiceImpl();
 
     @RequestMapping("")
     public String listContacts(Map<String, Object> map) {
-     	map.put("contactList", service.query("select Id,FirstName,LastName,Email FROM Contact"));
+     	map.put("contactList", salesforceService.query("select Id,FirstName,LastName,Email FROM Contact"));
     	return "contacts";
     }
 
     @RequestMapping("/{id}")
     public String getContactDetail(@PathVariable("id") String id, Map<String, Object> map) {
-        map.put("record", StringFieldsOnly(PopulatedFieldsOnly(service.fetch("Contact", id))));
+        map.put("record", StringFieldsOnly(PopulatedFieldsOnly(salesforceService.fetch("Contact", id))));
         return "contactDetail";
     }
     
     @RequestMapping("/{id}/e")
     public String editContact(@PathVariable("id") String id, Map<String, Object> map) {
-        map.put("record", StringFieldsOnly(PopulatedFieldsOnly(service.fetch("Contact", id))));
+        map.put("record", StringFieldsOnly(PopulatedFieldsOnly(salesforceService.fetch("Contact", id))));
         return "editContact";
     }
     
@@ -49,10 +49,10 @@ public class ContactsController {
     public String updateContact(@PathVariable("id") String id, HttpServletRequest request, Map<String, Object> map) throws IOException {
         final ServletServerHttpRequest inputMessage = new ServletServerHttpRequest(request);
         final Map<String,String> formData = new FormHttpMessageConverter().read(null, inputMessage).toSingleValueMap();
-        final RichSObject record = service.of("Contact", formData).getField("id").setValue(id);
+        final RichSObject record = salesforceService.of("Contact", formData).getField("id").setValue(id);
         
         try {
-            service.update(record);
+        	salesforceService.update(record);
             return "redirect:../" + id;
         } catch (RuntimeException e) {
             map.put("record", StringFieldsOnly(UpdateableFieldsOnly(record)));
@@ -64,7 +64,7 @@ public class ContactsController {
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
     public String deleteSObjectRecord(@PathVariable("id") String id, Map<String, Object> map) {
-        service.delete(service.of("Contact", id));
+    	salesforceService.delete(salesforceService.of("Contact", id));
         return "OK";
     }
 
