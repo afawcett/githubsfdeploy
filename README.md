@@ -6,9 +6,7 @@ It is backed by the [Rich SObjects](https://github.com/ryanbrainard/richsobjects
 
 ## Getting Started
 
-This template is designed to be [cloned with the AgI service](https://agi.herokuapp.com/clone?template=template-sfdc-java-springmvc&callbackUrl=/_auth),
-which will automatically create your own app based on this template in your [Heroku](http://heroku.com) account.
-It will also assist you with setting up remote access configuration to connect to the Salesforce API.
-After cloning and configuration are complete, you will be provided with instructions to make local changes and deploy to Heroku.
-
-[__Clone Now__](https://agi.herokuapp.com/clone?template=template-sfdc-java-springmvc&callbackUrl=/_auth)
+1. [__Clone Now__](https://api.heroku.com/myapps/template-java-spring-sfdc/clone)
+2. Setup your salesforce.com OAuth Remote Access. You will then have a OAuth client key and secret
+3. Update the Environment variables to include the OAuth client key and secret
+4. Navigate to the "contacts" page and you should now be authenticated against salesforce and view/create/update/delete contacts
