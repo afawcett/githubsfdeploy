@@ -220,18 +220,8 @@
               </li>
             </ol>
 		    <a name="step3" id="step3"></a>
-            <h2>Step 3. Makes some changes to the app</h2>
-            <ol>
-              <li>Open <code>PersonServiceImpl.java</code></li>
-              <li>Query the people in alphabetical order by replacing line 29 with the following two lines:
-                <pre class="once language-java">
-Root&lt;Person&gt; from = c.from(Person.class);
-c.orderBy(em.getCriteriaBuilder().asc(from.get("lastName")));
-                </pre>
-              </li>
-            </ol>
 
-            <h2>Step 4. Setup the Salesforce Remote Access</h2>
+            <h2>Step 3. Setup the Salesforce Remote Access</h2>
             <ol>
             
 	            
@@ -246,7 +236,7 @@ c.orderBy(em.getCriteriaBuilder().asc(from.get("lastName")));
 				<li>Leave the Remote Access Detail page open because shortly you will need some information from it</li>
 	            
             </ol>
-            <h2>Step 5. Add OAuth Environment variables</h2>
+            <h2>Step 4. Add OAuth Environment variables</h2>
             <p>Now that we have configured the Remote access, we need to provide the OAuth crendetials to Heroku app through Environment variables.</p>
 			<ol>
 				<li>In the <code>My Heroku Applications</code> view in Eclipse select the application's context menu</li>
@@ -261,6 +251,18 @@ c.orderBy(em.getCriteriaBuilder().asc(from.get("lastName")));
 				<li>Retrieve the <code>Consumer Secret</code> value from the <code>Remote Access Detail</code> page then copy and paste it into the <code>Value</code> field</li>
 				<li>Select <code>OK</code></li>
 			</ol>
+            <h2>Step 5. Makes some changes to the app</h2>
+            <ol>
+             <li>Open <code>src/main/java/com/example/controller/ContactsController.java </code></li>
+             <li>Query the people in alphabetical order by replacing line 32 with the following two lines:
+                <pre class="once language-java">
+map.put("contactList",salesforceService.query(
+                        "select Id,FirstName,LastName,Email FROM Contact 
+                        order by FirstName asc"));
+                </pre>
+              </li>
+            </ol>
+
             <h2>Step 6. Deploy to Heroku</h2>
             <ol>
               <li>Right-click the project root and choose <code>Team</code> <i class="icon-chevron-right"></i> <code>Commit</code></li>
@@ -364,11 +366,12 @@ heroku config:add SFDC_OAUTH_CLIENT_SECRET=[Consumer Secret from Remote Acess Pa
 			</pre>            
             <h2>Step 6. Makes some changes to the app</h2>
             <ol>
-              <li>Open <code>src/main/java/com/example/PersonServiceImpl.java in your favorite editor</code></li>
-              <li>Query the people in alphabetical order by replacing line 29 with the following two lines:
+              <li>Open <code>src/main/java/com/example/controller/ContactsController.java in your favorite editor</code></li>
+              <li>Query the people in alphabetical order by replacing line 32 with the following two lines:
                 <pre class="once language-java">
-Root&lt;Person&gt; from = c.from(Person.class);
-c.orderBy(em.getCriteriaBuilder().asc(from.get("lastName")));
+map.put("contactList",salesforceService.query(
+                        "select Id,FirstName,LastName,Email FROM Contact 
+                        order by FirstName asc"));
                 </pre>
               </li>
             </ol>
