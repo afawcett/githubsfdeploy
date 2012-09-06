@@ -241,7 +241,7 @@ c.orderBy(em.getCriteriaBuilder().asc(from.get("lastName")));
 				<li>Select <code>New</code> to create a new Remote Access Application</li>
 				<li>In the <code>Application</code> field enter <code><script type="text/javascript">document.write(appname());</script></code></li> 
 				<li>In the <code>Contact Email</code> field enter your email address</li>
-				<li>Enter https://<code><script>document.write(appname());</script></code>.herokuapp.com/_auth in the Callback URL field</li>
+				<li>Enter <code>https://<script>document.write(appname());</script>.herokuapp.com/_auth</code> in the Callback URL field</li>
 				<li>Select <code>Save</code></li>
 				<li>Leave the Remote Access Detail page open because shortly you will need some information from it</li>
 	            
@@ -352,7 +352,7 @@ Authentication successful.</pre>
 				<li>Select <code>New</code> to create a new Remote Access Application</li>
 				<li>In the <code>Application</code> field enter <code><script type="text/javascript">document.write(appname());</script></code></li> 
 				<li>In the <code>Contact Email</code> field enter your email address</li>
-				<li>Enter https://<code><script>document.write(appname());</script></code>.herokuapp.com/_auth in the Callback URL field</li>
+				<li>Enter <code>https://<script>document.write(appname());</script>.herokuapp.com/_auth</code> in the Callback URL field</li>
 				<li>Select <code>Save</code></li>
 				<li>Leave the Remote Access Detail page open because shortly you will need some information from it</li>
 	            
