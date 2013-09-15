@@ -19,7 +19,7 @@
                         <tr>
                             <td>
                             	<a href="contacts/${contact.getField("id").value}">
-                            		${contact.getField("lastname").value}, ${contact.getField("firstname").value}
+                            		${contact.getField("title").value}, ${contact.getField("lastname").value}, ${contact.getField("firstname").value}
                             	</a>
                             </td>
                             <td>${contact.getField("email").value}</td>
@@ -28,7 +28,7 @@
                             	<a href="#" onClick="SFDC.deleteSObjectRecord(	'${contact.metadata.name}', 
                             													'${contact.getField("id").value}', 
                             													'${contact.getField("firstname").value} ${contact.getField("lastname").value}')"
-                            		class="btn btn-danger btn-mini">Delete</a>
+                            		class="btn btn-danger btn-mini">Delete X</a>
                             	</form>
                             </td>
                         </tr>
