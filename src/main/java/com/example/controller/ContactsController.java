@@ -63,7 +63,7 @@ public class ContactsController {
 
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
-    public String deleteSObjectRecord(@PathVariable("id") String id, Map<String, Object> map) {
+    public String deleteSObjectRecord(@PathVariable("id") String id, Map<String, Object> map) throws Exception {
     	salesforceService.delete(salesforceService.of("Contact", id));
         return "OK";
     }
