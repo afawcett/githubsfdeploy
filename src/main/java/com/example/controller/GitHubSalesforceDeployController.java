@@ -34,6 +34,8 @@ import com.sforce.soap.metadata.MetadataConnection;
 import com.sforce.soap.metadata.RunTestFailure;
 import com.sforce.soap.metadata.RunTestsResult;
 
+// githubsfdeploy.herokuapp.com/sfdc/githubdeploy/financialforcedev/fflib-apex-common
+
 // http://localhost:8080/sfdc/githubdeploy/financialforcedev/fflib-apex-common
 
 @Controller
@@ -54,7 +56,10 @@ public class GitHubSalesforceDeployController {
     	RepositoryService service = new RepositoryService(client);
     	RepositoryId repoId = RepositoryId.create(repoOwner, repoName);
     	Repository repo = service.getRepository(repoId);    	
-        System.out.println( repo.getDescription() );
+        StringBuilder deploymentFiles = new StringBuilder();
+        deploymentFiles.append( "Repository:  " + repoOwner + "/" + repoName + "</br>");
+        deploymentFiles.append( "Description: " + repo.getDescription() + "</br>");
+        deploymentFiles.append( "Files:</br>");
         
         // Content service
         ContentsServiceEx contentService = new ContentsServiceEx(client);
@@ -81,7 +86,7 @@ public class GitHubSalesforceDeployController {
 					// Generate the Metadata zip entry name (from regex above?)
 					String metadataZipEntryName = zipEntry.getName().substring(salesforceDeployRoot.length());					
 					ZipEntry metadataZipEntry = new ZipEntry(metadataZipEntryName);
-					System.out.println(metadataZipEntryName);					
+					deploymentFiles.append(metadataZipEntryName + "</br>");					
 					zipOS.putNextEntry(metadataZipEntry);
 					// Copy bytes over from Github archive input stream to Metadata zip output stream
 					byte[] buffer = new byte[1024];
@@ -96,6 +101,7 @@ public class GitHubSalesforceDeployController {
 		zipOS.close();
 		if(salesforceDeployRoot==null)
 			throw new Exception("Did not find the /src folder");
+		map.put("deploymentFiles", deploymentFiles);
 				
 		// Connect to Salesforce Metadata API
         ForceServiceConnector connector = new ForceServiceConnector(ForceServiceConnector.getThreadLocalConnectorConfig());
