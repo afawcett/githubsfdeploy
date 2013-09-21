@@ -31,12 +31,12 @@
         </tr>
     </table>    
     <c:if test="${githubcontents != null}">
-		<pre id="githubcontents"></pre>		
 	    <div class="btn-group">
 	        <input id="deploy" value="Deploy" type="button" onclick="GitHubDeploy.deploy();" class="btn"/>
 	    </div>	    
 	    <pre id="deploystatus" style="display:none">
 	    </pre>
+		<pre id="githubcontents"></pre>		
     </c:if>			
 </div>
 <script src="/resources/js/jquery-1.7.1.min.js"></script>
