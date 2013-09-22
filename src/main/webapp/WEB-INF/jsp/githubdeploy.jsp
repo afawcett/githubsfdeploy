@@ -57,12 +57,17 @@
 			// Render GitHub repository contents
 			render: function(container) {
 					if(container.repositoryItem!=null)
-						$('#githubcontents').append('<div>' + container.repositoryItem.path + '</div>');
+						$('#githubcontents').append(
+							'<div><a target="_new" href="${repo.getHtmlUrl()}/blob/master/' + 
+								container.repositoryItem.path + '">' + container.repositoryItem.path + '</a></div>');
 					for(fileIdx in container.repositoryItems)
 						if(container.repositoryItems[fileIdx].repositoryItem.type == 'dir')
 							GitHubDeploy.render(container.repositoryItems[fileIdx]);
 						else
-							$('#githubcontents').append('<div>' + container.repositoryItems[fileIdx].repositoryItem.path + '</div>');
+							$('#githubcontents').append(
+								'<div><a target="_new" href="${repo.getHtmlUrl()}/blob/master/' + 
+									container.repositoryItems[fileIdx].repositoryItem.path + '">' + 
+									container.repositoryItems[fileIdx].repositoryItem.path + '</a></div>');
 				},
 				
 			// Deploy
