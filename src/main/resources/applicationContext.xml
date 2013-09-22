@@ -12,7 +12,7 @@
                            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
 
     <context:annotation-config />
-    <context:component-scan base-package="com.example" />
+    <context:component-scan base-package="com.andyinthecloud.githubsfdeploy" />
     
     <mvc:annotation-driven/>
 

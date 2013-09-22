@@ -1,4 +1,4 @@
-package com.example.config;
+package com.andyinthecloud.githubsfdeploy.config;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;

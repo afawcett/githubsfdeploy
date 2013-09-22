@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.example</groupId>
+    <groupId>com.andyinthecloud.githubsfdeploy</groupId>
     <artifactId>template-sfdc-java-springmvc</artifactId>
     <packaging>war</packaging>
     <version>0.0.2-SNAPSHOT</version>

@@ -1,4 +1,4 @@
-package com.example.services;
+package com.andyinthecloud.githubsfdeploy.services;
 
 import com.force.sdk.oauth.context.ForceSecurityContextHolder;
 import com.github.ryanbrainard.richsobjects.api.client.SfdcApiSessionProvider;

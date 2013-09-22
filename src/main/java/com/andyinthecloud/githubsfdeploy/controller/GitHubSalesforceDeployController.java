@@ -1,4 +1,4 @@
-package com.example.controller;
+package com.andyinthecloud.githubsfdeploy.controller;
 
 import static org.eclipse.egit.github.core.client.IGitHubConstants.SEGMENT_REPOS;
 

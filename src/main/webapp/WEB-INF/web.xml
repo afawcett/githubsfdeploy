@@ -8,7 +8,7 @@
 
     <filter>
       <filter-name>OAuthConfigChecker</filter-name>
-      <filter-class>com.example.config.OAuthConfigChecker</filter-class>
+      <filter-class>com.andyinthecloud.githubsfdeploy.config.OAuthConfigChecker</filter-class>
     </filter>
     <filter-mapping>
       <filter-name>OAuthConfigChecker</filter-name>
