@@ -49,6 +49,10 @@ import com.sforce.soap.metadata.RunTestsResult;
 @RequestMapping("/githubdeploy")
 public class GitHubSalesforceDeployController {
     
+	// Allocated via your GitHub Account Settings, set as environment vars, provides increased limits per hour for GitHub API calls
+	private static String GITHUB_CLIENT_ID = "GITHUB_CLIENT_ID";
+	private static String GITHUB_CLIENT_SECRET = "GITHUB_CLIENT_SECRET";
+		
     @RequestMapping(method = RequestMethod.GET, value = "/{owner}/{repo}")
     public String confirm(@PathVariable("owner") String repoOwner, @PathVariable("repo") String repoName, Map<String, Object> map) throws Exception 
     {
@@ -62,7 +66,8 @@ public class GitHubSalesforceDeployController {
 	    	map.put("userContext", new ForceServiceConnector(ForceServiceConnector.getThreadLocalConnectorConfig()).getConnection().getUserInfo());
 	    	
 	    	// Display repo info
-	    	GitHubClientOAuthServer client = new GitHubClientOAuthServer("c9172f8413daedef3f1f", "b53b2ecb62b7a328a6f6889edf7867426aedf4a2" );
+	    	GitHubClientOAuthServer client = 
+	    		new GitHubClientOAuthServer(System.getenv(GITHUB_CLIENT_ID), System.getenv(GITHUB_CLIENT_SECRET) );
 	    	map.put("repo", null);
 	    	map.put("githubcontents", null);
 	    	RepositoryService service = new RepositoryService(client);
@@ -92,7 +97,7 @@ public class GitHubSalesforceDeployController {
     {
     	// Connect via oAuth client and secret to get greater request limits
     	GitHubClientOAuthServer client = 
-    		new GitHubClientOAuthServer("c9172f8413daedef3f1f", "b53b2ecb62b7a328a6f6889edf7867426aedf4a2" );
+	    		new GitHubClientOAuthServer(System.getenv(GITHUB_CLIENT_ID), System.getenv(GITHUB_CLIENT_SECRET) );
    
     	// Repository container (files to deploy)
     	ObjectMapper mapper = new ObjectMapper();
@@ -152,7 +157,6 @@ public class GitHubSalesforceDeployController {
 		deployOptions.setSinglePackage(true);
 		deployOptions.setPerformRetrieve(false);
 		deployOptions.setRollbackOnError(true);
-		deployOptions.setRunAllTests(true);
 		AsyncResult asyncResult = metadataConnection.deploy(baos.toByteArray(), deployOptions);
 
 		// Given the client the AysncResult to poll for the result of the deploy
