@@ -8,25 +8,25 @@
     </c:if>	
     <table class="table table-striped table-condensed">
         <tr>
-            <td>Repository Name:</td>
+            <td><b>Repository Name:</b></td>
             <td><c:out value="${repositoryName}"/></td>
         </tr>
 	    <c:if test="${repo != null}">
 	        <tr>
-	            <td>Repository Description:</td>
+	            <td><b>Repository Description:</b></td>
 	            <td>${repo.getDescription()}</td>
 	        </tr>
 	        <tr>
-	            <td>Repository URL:</td>
-	            <td><a href="${repo.getHtmlUrl()}" target="_new">Repository</td>
+	            <td><b>Repository URL:</b></td>
+	            <td><a href="${repo.getHtmlUrl()}" target="_new">${repo.getHtmlUrl()}</td>
 	        </tr>
 	    </c:if>
         <tr>
-            <td>Salesforce Organization Name:</td>
+            <td><b>Salesforce Organization Name:</b></td>
             <td><c:out value="${userContext.getOrganizationName()}"/></td>
         </tr>
         <tr>
-            <td>Salesforce User Name:</td>
+            <td><b>Salesforce User Name:</b></td>
             <td><c:out value="${userContext.getUserName()}"/></td>
         </tr>
     </table>    
