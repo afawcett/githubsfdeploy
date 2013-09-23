@@ -31,7 +31,7 @@
     <div class="navbar-inner">
         <div class="container">
             <a href="/" class="brand">GitHub Salesforce Deploy Tool</a>
-            <a href="/" class="brand" id="heroku">by <strong>heroku</strong></a>
+            <a target="_new" href="http://andyinthecloud.com" class="brand" id="heroku">by <strong>andyinthecloud</strong></a>
         </div>
     </div>
 </div>

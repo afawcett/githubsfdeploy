@@ -33,7 +33,7 @@
     </fss:oauth>
     
     <security:http use-expressions="true">
-        <security:intercept-url pattern="/sfdc/**" access="isAuthenticated()" />
+        <security:intercept-url pattern="/app/**" access="isAuthenticated()" />
     </security:http>
 
 </beans>

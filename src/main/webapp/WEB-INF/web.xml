@@ -12,7 +12,7 @@
     </filter>
     <filter-mapping>
       <filter-name>OAuthConfigChecker</filter-name>
-      <url-pattern>/sfdc/*</url-pattern>
+      <url-pattern>/app/*</url-pattern>
     </filter-mapping>
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
@@ -63,7 +63,7 @@
     
     <servlet-mapping>
         <servlet-name>spring</servlet-name>
-        <url-pattern>/sfdc/*</url-pattern>
+        <url-pattern>/app/*</url-pattern>
     </servlet-mapping>
     
 </web-app>

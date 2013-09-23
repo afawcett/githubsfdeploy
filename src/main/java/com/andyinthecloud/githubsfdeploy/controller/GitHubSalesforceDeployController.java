@@ -82,7 +82,7 @@ public class GitHubSalesforceDeployController {
 	    	RepositoryItem repositoryContainer = new RepositoryItem();
 	    	repositoryContainer.repositoryItems = new ArrayList<RepositoryItem>();
 	    	repositoryScanResult.metadataFolderBySuffix = new HashMap<String, DescribeMetadataObject>();
-	    	DescribeMetadataResult metadataDescribeResult = forceConnector.getMetadataConnection().describeMetadata(28.0);
+	    	DescribeMetadataResult metadataDescribeResult = forceConnector.getMetadataConnection().describeMetadata(28.0); // TODO: Make version configurable / auto
 	    	for(DescribeMetadataObject describeObject : metadataDescribeResult.getMetadataObjects())
 	    	{
 	    		repositoryScanResult.metadataFolderBySuffix.put(describeObject.getSuffix(), describeObject);
@@ -139,7 +139,7 @@ public class GitHubSalesforceDeployController {
         {
         	// Construct package manifest and files to deploy map by path
         	Package packageManifest = new Package();    	
-        	packageManifest.setVersion("28.0");
+        	packageManifest.setVersion("28.0"); // TODO: Make version configurable / auto
         	List<PackageTypeMembers> packageTypeMembersList = new ArrayList<PackageTypeMembers>(); 
         	scanFilesToDeploy(filesToDeploy, typeMembersByType, repositoryContainer);
 	    	for(String metadataType : typeMembersByType.keySet())
@@ -204,7 +204,7 @@ public class GitHubSalesforceDeployController {
 				{
 					StringBuilder sb = new StringBuilder();
 					sb.append("<ApexClass xmlns=\"http://soap.sforce.com/2006/04/metadata\">");
-					sb.append("<apiVersion>27.0</apiVersion>");
+					sb.append("<apiVersion>27.0</apiVersion>"); // TODO: Make version configurable / auto
 					sb.append("<status>Active</status>");
 					sb.append("</ApexClass>");
 					ZipEntry missingMetadataZipEntry = new ZipEntry(repoItem.metadataFolder+"/"+repoItem.repositoryItem.getName()+"-meta.xml");
@@ -423,7 +423,7 @@ public class GitHubSalesforceDeployController {
 			repositoryItem.metadataFile = metadataObject.getMetaFile();
 			repositoryContainer.repositoryItems.add(repositoryItem);
     	}    		
-    	// Process direct
+    	// Process directories
     	for(RepositoryContents repo : contents)
     	{
     		if(repo.getType().equals("dir"))

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Spring MVC Template for Salesforce</title>
+    <title>GitHub Salesforce Deploy Tool</title>
 
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,7 +31,7 @@
     <div class="navbar-inner">
         <div class="container">
             <a href="/" class="brand">GitHub Salesforce Deploy Tool</a>
-            <a href="/" class="brand" id="heroku">by <strong>heroku</strong></a>
+            <a target="_new" href="http://andyinthecloud.com" class="brand" id="heroku">by <strong>andyinthecloud</strong></a>
         </div>
     </div>
 </div>
