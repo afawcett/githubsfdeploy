@@ -108,7 +108,7 @@ public class GitHubSalesforceDeployController {
 	    	RepositoryItem repositoryContainer = new RepositoryItem();
 	    	repositoryContainer.repositoryItems = new ArrayList<RepositoryItem>();
 	    	repositoryScanResult.metadataFolderBySuffix = new HashMap<String, DescribeMetadataObject>();
-	    	DescribeMetadataResult metadataDescribeResult = forceConnector.getMetadataConnection().describeMetadata(28.0); // TODO: Make version configurable / auto
+	    	DescribeMetadataResult metadataDescribeResult = forceConnector.getMetadataConnection().describeMetadata(29.0); // TODO: Make version configurable / auto
 	    	for(DescribeMetadataObject describeObject : metadataDescribeResult.getMetadataObjects())
 	    	{
 	    		repositoryScanResult.metadataFolderBySuffix.put(describeObject.getSuffix(), describeObject);
@@ -165,7 +165,7 @@ public class GitHubSalesforceDeployController {
         {
         	// Construct package manifest and files to deploy map by path
         	Package packageManifest = new Package();    	
-        	packageManifest.setVersion("28.0"); // TODO: Make version configurable / auto
+        	packageManifest.setVersion("29.0"); // TODO: Make version configurable / auto
         	List<PackageTypeMembers> packageTypeMembersList = new ArrayList<PackageTypeMembers>(); 
         	scanFilesToDeploy(filesToDeploy, typeMembersByType, repositoryContainer);
 	    	for(String metadataType : typeMembersByType.keySet())
@@ -217,7 +217,15 @@ public class GitHubSalesforceDeployController {
 			{
 				// Create metadata file (in correct folder for its type)
 				RepositoryItem repoItem = filesToDeploy.get(repoPath);
-				ZipEntry metadataZipEntry = new ZipEntry(repoItem.metadataFolder+"/"+repoItem.repositoryItem.getName());
+				String zipName = repoItem.metadataFolder+"/";
+				if(repoItem.metadataInFolder)
+				{
+					String[] folders = repoItem.repositoryItem.getPath().split("/");
+					String folderName = folders[folders.length-2];
+					zipName+= folderName + "/";
+				}
+				zipName+= repoItem.repositoryItem.getName();
+				ZipEntry metadataZipEntry = new ZipEntry(zipName);
 				zipOS.putNextEntry(metadataZipEntry);
 				// Copy bytes over from Github archive input stream to Metadata zip output stream
 				byte[] buffer = new byte[1024];
@@ -326,6 +334,8 @@ public class GitHubSalesforceDeployController {
     	public String metadataFolder;
 		public String metadataType;
 		public Boolean metadataFile;
+		public Boolean metadataInFolder;
+		public String metadataSuffix;
     }
     
     public static class RepositoryScanResult
@@ -434,19 +444,43 @@ public class GitHubSalesforceDeployController {
     		{
     			// Adjust to look for a Salesforce metadata file extension?
     			extensionPosition = fileNameWithoutExtension.lastIndexOf(".");
-    			if(extensionPosition == -1)
+    			if(extensionPosition != -1)
+    				fileExtension = repo.getName().substring(extensionPosition + 1);
+    		}    
+    		// Is this file extension recognised by Salesforce Metadata API?
+    		DescribeMetadataObject metadataObject = repositoryScanResult.metadataFolderBySuffix.get(fileExtension);
+    		if(metadataObject==null)
+    		{
+    			// Is this a Document file which supports any file extension?    			
+    			String[] folders = repo.getPath().split("/");
+    			// A document file within a sub-directory of the 'documents' folder?
+    			if(folders.length>3 && folders[folders.length-3].equals("documents"))
+    			{
+    				// Metadata describe for Document
+    				metadataObject = repositoryScanResult.metadataFolderBySuffix.get(null);	
+    			}
+    			// A file within the root of the 'document' folder?
+    			else if(folders.length>2 && folders[folders.length-2].equals("documents"))
+    			{
+    				// There is no DescribeMetadataObject for Folders metadata types, emulate one to represent a "documents" Folder
+    				metadataObject = new DescribeMetadataObject();
+    				metadataObject.setDirectoryName("documents");
+    				metadataObject.setInFolder(false);
+    				metadataObject.setXmlName("Document");
+    				metadataObject.setMetaFile(true);
+    				metadataObject.setSuffix("dir");
+    			}
+    			else
     				continue;
-    			fileExtension = repo.getName().substring(extensionPosition + 1);
-    		}    			
-    		if(!repositoryScanResult.metadataFolderBySuffix.containsKey(fileExtension))
-    			continue;
-    		// Add file
-    		DescribeMetadataObject metadataObject = repositoryScanResult.metadataFolderBySuffix.get(fileExtension); 
+    		}
+    		// Add file    		
 			RepositoryItem repositoryItem = new RepositoryItem();
 			repositoryItem.repositoryItem = repo;
 			repositoryItem.metadataFolder = metadataObject.getDirectoryName();
 			repositoryItem.metadataType = metadataObject.getXmlName();
 			repositoryItem.metadataFile = metadataObject.getMetaFile();
+			repositoryItem.metadataInFolder = metadataObject.getInFolder();
+			repositoryItem.metadataSuffix = metadataObject.getSuffix();
 			repositoryContainer.repositoryItems.add(repositoryItem);
     	}    		
     	// Process directories
@@ -457,10 +491,11 @@ public class GitHubSalesforceDeployController {
     			RepositoryItem repositoryItem = new RepositoryItem();
     			repositoryItem.repositoryItem = repo;
     			repositoryItem.repositoryItems = new ArrayList<RepositoryItem>();
-				repositoryContainer.repositoryItems.add(repositoryItem);    			
     			scanRepository(contentService, repoId, contentService.getContents(repoId, repo.getPath().replace(" ", "%20")), repositoryItem, repositoryScanResult);
     			if(repositoryScanResult.packageRepoPath!=null && repo.getPath().equals(repositoryScanResult.packageRepoPath))
-    				repositoryScanResult.pacakgeRepoDirectory = repositoryItem; 
+    				repositoryScanResult.pacakgeRepoDirectory = repositoryItem;
+    			if(repositoryItem.repositoryItems.size()>0)
+    				repositoryContainer.repositoryItems.add(repositoryItem);    			
     		}
     	}
 	}
@@ -484,15 +519,31 @@ public class GitHubSalesforceDeployController {
     		{
     			// Map path to repository item
     			filesToDeploy.put(repositoryItem.repositoryItem.getPath(), repositoryItem);
-    			// Skip metadata files
-    			if(repositoryItem.repositoryItem.getName().endsWith(".xml"))
-    				continue;
+    			// Is this repository file a metadata file?
+    			Boolean isMetadataFile = repositoryItem.repositoryItem.getName().endsWith(".xml");
+    			Boolean isMetadataFileForFolder = "dir".equals(repositoryItem.metadataSuffix);
+    			if(isMetadataFile) // Skip meta files
+    				if(!isMetadataFileForFolder) // As long as its not a metadata file for a folder
+    					continue;    			
     			// Add item to list by metadata type for package manifiest generation
     			List<String> packageTypeMembers = typeMembersByType.get(repositoryItem.metadataType);
     			if(packageTypeMembers==null)
     				typeMembersByType.put(repositoryItem.metadataType, (packageTypeMembers = new ArrayList<String>()));
-    			String repoFileName = repositoryItem.repositoryItem.getName();
-    			packageTypeMembers.add(repoFileName.substring(0, repoFileName.indexOf(".")));
+    			// Determine the component name
+    			String componentName = repositoryItem.repositoryItem.getName();
+    			if(componentName.indexOf(".")>0) // Strip file extension?
+    				componentName = componentName.substring(0, componentName.indexOf("."));
+    			if(componentName.indexOf("-meta")>0) // Strip any -meta suffix (on the end of folder metadata file names)?
+    				componentName = componentName.substring(0, componentName.indexOf("-meta"));
+    			// Qualify the component name by its folder?
+    			if(repositoryItem.metadataInFolder)
+    			{
+    				// Parse the component folder name from the path to the item
+					String[] folders = repositoryItem.repositoryItem.getPath().split("/");
+					String folderName = folders[folders.length-2];
+					componentName = folderName + "/" + componentName;    				
+    			}
+    			packageTypeMembers.add(componentName);
     		}
     	}
     }    
