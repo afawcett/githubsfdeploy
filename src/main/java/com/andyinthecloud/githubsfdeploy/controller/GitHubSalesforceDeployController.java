@@ -185,7 +185,7 @@ public class GitHubSalesforceDeployController {
 	        xmlOutputStream.setPrefix("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 	        packageManifest.write(packageQName, xmlOutputStream, typeMapper);
 	        xmlOutputStream.close();
-	        packageManifestXml = new String(packageBaos.toByteArray());
+	        packageManifestXml = new String(packageBaos.toByteArray()); 
         }
         
         // Download the Repository as an archive zip
