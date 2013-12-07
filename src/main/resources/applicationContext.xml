@@ -27,7 +27,7 @@
     <mvc:resources mapping="/resources/**" location="/resources/" />
 
     <fss:oauth logout-url="/logout" default-logout-success="/">
-        <fss:oauthInfo endpoint="http://login.salesforce.com"
+        <fss:oauthInfo endpoint="#{systemEnvironment['SFDC_END_POINT']}"
                        oauth-key="#{systemEnvironment['SFDC_OAUTH_CLIENT_ID']}"
                        oauth-secret="#{systemEnvironment['SFDC_OAUTH_CLIENT_SECRET']}"/>
     </fss:oauth>
