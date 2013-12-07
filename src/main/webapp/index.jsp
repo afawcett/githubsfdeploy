@@ -26,7 +26,25 @@
 
 </head>
 
-<body>
+<script>
+function githubdeploy()
+{
+	var sfdeployurl = 
+		$('#production').attr('checked') ? 
+			'https://githubsfdeploy.herokuapp.com/app/githubdeploy' :
+			'https://githubsfdeploy-sandbox.herokuapp.com/app/githubdeploy';
+	sfdeployurl+= '/' + $('#owner').val() + '/' + $('#repo').val();
+	window.location = sfdeployurl;  
+}
+function load()
+{
+	$('#owner').val($.url().param('owner'));
+	$('#repo').val($.url().param('repo'));
+	$('#login').focus(); 
+}
+</script>
+
+<body onload="githubdeploy();">
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
@@ -37,7 +55,34 @@
 </div>
 
 <div class="container">
+	<br/>
+	<form onsubmit="loginToSalesforce();return false;">
+		<label><input type="radio" id="production" name="environment" checked="true" value="production">&nbsp;Production / Developer</label>
+		<label><input type="radio" id="sandbox" name="environment" value="sandbox">&nbsp;Sandbox</label>
+		<table>
+			<tr>
+				<td>
+					<label>Owner</label>
+				</td>
+				<td>
+					<label>Repository</label>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input id="owner"/>&nbsp;
+				</td>
+				<td>
+					<input id="repo"/>
+				</td>
+			</tr>
+		</table>
+		<br/>
+		<input type="submit" id="login" value="Login with Salesforce" onclick="githubdeploy();return false;"/>
+	</form>
 </div>
+
 <script src="/resources/js/jquery-1.7.1.min.js"></script>
+<script src="/resources/js/purl.js"></script>
 </body>
 </html>
