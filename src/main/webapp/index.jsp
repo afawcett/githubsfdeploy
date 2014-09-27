@@ -22,6 +22,9 @@
             margin-top: 10px;
             margin-bottom: 10px;
         }
+        input:focus {
+    		outline: none;
+		}
     </style>
 
 </head>
@@ -36,11 +39,30 @@ function githubdeploy()
 	sfdeployurl+= '/' + $('#owner').val() + '/' + $('#repo').val();
 	window.location = sfdeployurl;  
 }
+function togglebuttoncode()
+{
+	if($('#showbuttoncode').attr('checked') == 'checked')
+		$('#buttoncodepanel').show();
+	else
+		$('#buttoncodepanel').hide();
+}
+function updatebuttonhtml()
+{
+	var repoOwner = $('#owner').val();
+	var repoName = $('#repo').val();
+	var buttonhtml = 
+		'<a href="https://githubsfdeploy.herokuapp.com?owner=' + repoOwner +'&repo=' + repoName + '">\n' +
+			'  <img alt="Deploy to Salesforce"\n' + 
+			'       src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/src/main/webapp/resources/img/deploy.png">\n' +
+		'</a>';
+	$('#buttonhtml').text(buttonhtml);
+}
 function load()
 {
 	$('#owner').val($.url().param('owner'));
 	$('#repo').val($.url().param('repo'));
-	$('#login').focus(); 
+	$('#login').focus();
+	updatebuttonhtml();
 }
 </script>
 
@@ -70,15 +92,21 @@ function load()
 			</tr>
 			<tr>
 				<td>
-					<input id="owner"/>&nbsp;
+					<input id="owner" oninput="updatebuttonhtml();"/>&nbsp;
 				</td>
 				<td>
-					<input id="repo"/>
+					<input id="repo" oninput="updatebuttonhtml();"/>
 				</td>
 			</tr>
 		</table>
 		<br/>
-		<input type="submit" id="login" value="Login with Salesforce" onclick="githubdeploy();return false;"/>
+		<p><input type="submit" id="login" value="Login to Salesforce" onclick="githubdeploy();return false;"/></p>
+		<p><label for="showbuttoncode" style="color:grey">Show GitHub README button code&nbsp;<input id="showbuttoncode" type="checkbox" onclick="togglebuttoncode();"/></label></p>
+		<div id="buttoncodepanel" style="display:none">
+			<p>Copy paste the HTML code below and insert into your GitHub README to display this button.</p>
+			<p><img src="/resources/img/deploy.png"/></p>
+			<span style="border: 1px grey"><pre id="buttonhtml"></pre></span>
+		</div>
 	</form>
 </div>
 
