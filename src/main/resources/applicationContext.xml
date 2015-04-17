@@ -13,7 +13,7 @@
 
     <context:annotation-config />
     <context:component-scan base-package="com.andyinthecloud.githubsfdeploy" />
-    
+
     <mvc:annotation-driven/>
 
     <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -31,7 +31,7 @@
                        oauth-key="#{systemEnvironment['SFDC_OAUTH_CLIENT_ID']}"
                        oauth-secret="#{systemEnvironment['SFDC_OAUTH_CLIENT_SECRET']}"/>
     </fss:oauth>
-    
+
     <security:http use-expressions="true">
         <security:intercept-url pattern="/app/**" access="isAuthenticated()" />
     </security:http>
