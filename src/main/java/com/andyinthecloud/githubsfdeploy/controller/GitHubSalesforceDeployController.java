@@ -555,15 +555,15 @@ public class GitHubSalesforceDeployController {
 
     	public InputStream getStream(final GitHubRequest request) throws IOException
     	{
-    		return super.getStream(applyAuthorization(request));
+    		return super.getStream(applyClientIdAndSecret(request));
     	}
 
     	public GitHubResponse get(GitHubRequest request) throws IOException
     	{
-    		return super.get(applyAuthorization(request));
+    		return super.get(applyClientIdAndSecret(request));
     	}
 
-    	private GitHubRequest applyAuthorization(GitHubRequest request)
+    	private GitHubRequest applyClientIdAndSecret(GitHubRequest request)
     	{
     		Map<String, String> params = request.getParams();
     		if(params==null)
