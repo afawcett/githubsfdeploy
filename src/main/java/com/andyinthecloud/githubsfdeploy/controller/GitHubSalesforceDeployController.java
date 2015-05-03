@@ -72,10 +72,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.util.UriUtils;
 
 import com.force.sdk.connector.ForceServiceConnector;
-import com.force.sdk.connector.ForceConnectorConfig;
 import com.sforce.soap.metadata.AsyncResult;
 import com.sforce.soap.metadata.CodeCoverageWarning;
 import com.sforce.soap.metadata.DeployMessage;
@@ -90,7 +88,6 @@ import com.sforce.soap.metadata.RunTestFailure;
 import com.sforce.soap.metadata.RunTestsResult;
 import com.sforce.ws.bind.TypeMapper;
 import com.sforce.ws.parser.XmlOutputStream;
-import java.util.Random;
 
 @Controller
 @RequestMapping("/githubdeploy")
