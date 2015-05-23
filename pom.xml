@@ -2,7 +2,7 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.andyinthecloud.githubsfdeploy</groupId>
-    <artifactId>template-sfdc-java-springmvc</artifactId>
+    <artifactId>githubsfdeploy</artifactId>
     <packaging>war</packaging>
     <version>0.0.2-SNAPSHOT</version>
 
