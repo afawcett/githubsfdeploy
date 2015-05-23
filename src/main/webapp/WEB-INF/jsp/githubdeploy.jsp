@@ -5,8 +5,14 @@
 	</p>
     <c:if test="${error != null}">
         <div class="alert">${error}</div>
-    </c:if>	
+    </c:if>
     <table class="table table-striped table-condensed">
+    	<c:if test="${githuburl != null}">
+        <tr>
+            <td><b>Manage GitHub Permissions:</b></td>
+            <td><a href="${githuburl}" target="_new">${githuburl}</a></td>
+        </tr>
+        </c:if>
         <tr>
             <td><b>Repository Name:</b></td>
             <td><c:out value="${repositoryName}"/></td>
@@ -29,47 +35,47 @@
             <td><b>Salesforce User Name:</b></td>
             <td><c:out value="${userContext.getUserName()}"/></td>
         </tr>
-    </table>    
+    </table>
     <c:if test="${githubcontents != null}">
 	    <div class="btn-group">
 	        <input id="deploy" value="Deploy" type="button" onclick="GitHubDeploy.deploy();" class="btn"/>
-	    </div>	    
+	    </div>
 	    <pre id="deploystatus" style="display:none">
 	    </pre>
-		<pre id="githubcontents"></pre>		
-    </c:if>			
+		<pre id="githubcontents"></pre>
+    </c:if>
 </div>
 <script src="/resources/js/jquery-1.7.1.min.js"></script>
 <c:if test="${githubcontents != null}">
 	<script type="text/javascript">
-	
-		var GitHubDeploy = { 
-		
+
+		var GitHubDeploy = {
+
 			// Contents of the GitHub repository
 			contents: ${githubcontents},
-			
+
 			// Async result from Salesforce Metadata API
 			asyncResult : null,
-			
+
 			// Client timer Id used to poll Salesforce Metadata API
 			intervalId : null,
-			
+
 			// Render GitHub repository contents
 			render: function(container) {
 					if(container.repositoryItem!=null)
 						$('#githubcontents').append(
-							'<div><a target="_new" href="${repo.getHtmlUrl()}/blob/master/' + 
+							'<div><a target="_new" href="${repo.getHtmlUrl()}/blob/master/' +
 								container.repositoryItem.path + '">' + container.repositoryItem.path + '</a></div>');
 					for(fileIdx in container.repositoryItems)
 						if(container.repositoryItems[fileIdx].repositoryItem.type == 'dir')
 							GitHubDeploy.render(container.repositoryItems[fileIdx]);
 						else
 							$('#githubcontents').append(
-								'<div><a target="_new" href="${repo.getHtmlUrl()}/blob/master/' + 
-									container.repositoryItems[fileIdx].repositoryItem.path + '">' + 
+								'<div><a target="_new" href="${repo.getHtmlUrl()}/blob/master/' +
+									container.repositoryItems[fileIdx].repositoryItem.path + '">' +
 									container.repositoryItems[fileIdx].repositoryItem.path + '</a></div>');
 				},
-				
+
 			// Deploy
 			deploy: function() {
 					$('#deploy').attr('disabled', 'disabled');
@@ -93,18 +99,18 @@
 		                error: function(jqXHR, textStatus, errorThrown) {
 		                    alert('Failed ' + textStatus + errorThrown);
 		                }
-		            });			
+		            });
 				},
-				
+
 			// Render Async
 			renderAsync: function() {
 					$('#deploystatus').append(
-						'<div>Status: '+ 
-							GitHubDeploy.asyncResult.state + ' ' + 
+						'<div>Status: '+
+							GitHubDeploy.asyncResult.state + ' ' +
 							(GitHubDeploy.asyncResult.message != null ? GitHubDeploy.asyncResult.message : '') +
 						'</div>');
 				},
-				
+
 			// Check Status
 			checkStatus: function() {
 		            $.ajax({
@@ -124,12 +130,12 @@
 		                error: function(jqXHR, textStatus, errorThrown) {
 		                	$('#deploystatus').append('<div>Error: ' + textStatus + errorThrown + '</div>');
 		                }
-		            });					
+		            });
 				},
-			
+
 			// Check Deploy
 			checkDeploy: function() {
-					$('#deploystatus').append('Deployment Complete');		
+					$('#deploystatus').append('Deployment Complete');
 					$('#deploy').attr('disabled', null);
 		            $.ajax({
 		                type: 'GET',
@@ -142,14 +148,14 @@
 		                error: function(jqXHR, textStatus, errorThrown) {
 		                	$('#deploystatus').append('<div>Error: ' + textStatus + errorThrown + '</div>');
 		                }
-		            });													
+		            });
 				}
 		}
-		
+
 		// Render files selected to deploy
 		GitHubDeploy.render(GitHubDeploy.contents);
-		
+
 	</script>
-</c:if>	
+</c:if>
 </body>
 </html>
