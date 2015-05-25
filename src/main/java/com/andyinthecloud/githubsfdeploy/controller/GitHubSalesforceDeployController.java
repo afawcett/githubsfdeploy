@@ -177,7 +177,7 @@ public class GitHubSalesforceDeployController {
 			catch(Exception e)
 			{
 				if(accessToken == null)
-					return "redirect:" + "https://github.com/login/oauth/authorize?client_id=" + System.getenv(GITHUB_CLIENT_ID) + "&scope=repo&state=" + request.getRequestURL().toString();
+					return "redirect:" + "https://github.com/login/oauth/authorize?client_id=" + System.getenv(GITHUB_CLIENT_ID) + "&scope=repo&state=" + request.getRequestURI();
 				else
 					map.put("error", "Failed to retrive GitHub repository details : " + e.toString());
 			}
