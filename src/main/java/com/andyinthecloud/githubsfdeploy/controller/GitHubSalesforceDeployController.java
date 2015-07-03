@@ -74,6 +74,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.force.sdk.connector.ForceServiceConnector;
+import com.force.sdk.oauth.exception.ForceOAuthSessionExpirationException;
 import com.sforce.soap.metadata.AsyncResult;
 import com.sforce.soap.metadata.CodeCoverageWarning;
 import com.sforce.soap.metadata.DeployMessage;
@@ -207,10 +208,14 @@ public class GitHubSalesforceDeployController {
 				map.put("error", "No Salesforce files found in repository.");
 
 		}
+		catch (ForceOAuthSessionExpirationException e)
+		{
+			return "redirect:/logout";			
+		}
 		catch (Exception e)
 		{
 			// Handle error
-			map.put("error", "Failed to retrive GitHub repository details : " + e.toString());
+			map.put("error", "Unhandled Exception : " + e.toString());
 			e.printStackTrace();
 		}
 		return "githubdeploy";
