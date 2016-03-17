@@ -198,15 +198,32 @@ public class GitHubSalesforceDeployController {
 
 			// Retrieve repository contents applicable for deploy
 			ContentsServiceEx contentService = new ContentsServiceEx(client);
-			scanRepository(contentService, repoId, contentService.getContents(repoId), repositoryContainer, repositoryScanResult);
-			ObjectMapper mapper = new ObjectMapper();
-			if(repositoryScanResult.pacakgeRepoDirectory!=null)
-				map.put("githubcontents", mapper.writeValueAsString(repositoryScanResult.pacakgeRepoDirectory));
-			else if(repositoryContainer.repositoryItems.size()>0)
-				map.put("githubcontents", mapper.writeValueAsString(repositoryContainer));
-			else
-				map.put("error", "No Salesforce files found in repository.");
 
+			try
+			{
+				scanRepository(
+					contentService,
+					repoId,
+					contentService.getContents(repoId),
+					repositoryContainer,
+					repositoryScanResult
+				);
+
+				ObjectMapper mapper = new ObjectMapper();
+				if(repositoryScanResult.pacakgeRepoDirectory!=null)
+					map.put("githubcontents", mapper.writeValueAsString(repositoryScanResult.pacakgeRepoDirectory));
+				else if(repositoryContainer.repositoryItems.size()>0)
+					map.put("githubcontents", mapper.writeValueAsString(repositoryContainer));
+				else
+					map.put("error", "No Salesforce files found in repository.");
+			}
+			catch (RequestException e)
+			{
+				if (e.getStatus() == 404)
+					map.put("error", "Could not find the repository '" + repoName + "'. Ensure it is spelt correctly and that it is owned by '" + repoOwner + "'");
+				else
+					map.put("error", "Failed to scan the repository '" + repoName + "'. Callout to Github failed with status code " + e.getStatus());
+			}
 		}
 		catch (ForceOAuthSessionExpirationException e)
 		{
@@ -502,8 +519,6 @@ public class GitHubSalesforceDeployController {
 			this.clientId = clientId;
 			this.clientSecret = clientSecret;
 		}
-
-
 
 		public InputStream getStream(final GitHubRequest request) throws IOException
 		{
