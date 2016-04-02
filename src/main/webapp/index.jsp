@@ -68,7 +68,7 @@ function load()
 }
 </script>
 
-<body style="margin:10px">
+<body style="margin:10px" onload="load();">
 <form onsubmit="loginToSalesforce();return false;">
 
 <div class="slds-page-header" role="banner">
