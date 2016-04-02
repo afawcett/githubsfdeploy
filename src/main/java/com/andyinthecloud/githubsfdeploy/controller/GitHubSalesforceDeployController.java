@@ -187,13 +187,18 @@ public class GitHubSalesforceDeployController {
 			RepositoryScanResult repositoryScanResult = new RepositoryScanResult();
 			RepositoryItem repositoryContainer = new RepositoryItem();
 			repositoryContainer.repositoryItems = new ArrayList<RepositoryItem>();
-			repositoryScanResult.metadataFolderBySuffix = new HashMap<String, DescribeMetadataObject>();
-			DescribeMetadataResult metadataDescribeResult = forceConnector.getMetadataConnection().describeMetadata(29.0); // TODO: Make version configurable / auto
+			repositoryScanResult.metadataDescribeBySuffix = new HashMap<String, DescribeMetadataObject>();
+			repositoryScanResult.metadataDescribeByFolder = new HashMap<String, DescribeMetadataObject>();
+			DescribeMetadataResult metadataDescribeResult = forceConnector.getMetadataConnection().describeMetadata(36.0); // TODO: Make version configurable / auto
 			for(DescribeMetadataObject describeObject : metadataDescribeResult.getMetadataObjects())
 			{
-				repositoryScanResult.metadataFolderBySuffix.put(describeObject.getSuffix(), describeObject);
-				if(describeObject.getMetaFile())
-					repositoryScanResult.metadataFolderBySuffix.put(describeObject.getSuffix() + "-meta.xml", describeObject);
+				if(describeObject.getSuffix()==null) {
+					repositoryScanResult.metadataDescribeByFolder.put(describeObject.getDirectoryName(), describeObject);
+				} else {
+					repositoryScanResult.metadataDescribeBySuffix.put(describeObject.getSuffix(), describeObject);
+					if(describeObject.getMetaFile())
+						repositoryScanResult.metadataDescribeBySuffix.put(describeObject.getSuffix() + "-meta.xml", describeObject);					
+				}
 			}
 
 			// Retrieve repository contents applicable for deploy
@@ -280,7 +285,7 @@ public class GitHubSalesforceDeployController {
 		{
 			// Construct package manifest and files to deploy map by path
 			Package packageManifest = new Package();
-			packageManifest.setVersion("29.0"); // TODO: Make version configurable / auto
+			packageManifest.setVersion("36.0"); // TODO: Make version configurable / auto
 			List<PackageTypeMembers> packageTypeMembersList = new ArrayList<PackageTypeMembers>();
 			scanFilesToDeploy(filesToDeploy, typeMembersByType, repositoryContainer);
 			for(String metadataType : typeMembersByType.keySet())
@@ -362,7 +367,7 @@ public class GitHubSalesforceDeployController {
 				{
 					StringBuilder sb = new StringBuilder();
 					sb.append("<ApexClass xmlns=\"http://soap.sforce.com/2006/04/metadata\">");
-					sb.append("<apiVersion>27.0</apiVersion>"); // TODO: Make version configurable / auto
+					sb.append("<apiVersion>36.0</apiVersion>"); // TODO: Make version configurable / auto
 					sb.append("<status>Active</status>");
 					sb.append("</ApexClass>");
 					ZipEntry missingMetadataZipEntry = new ZipEntry(repoItem.metadataFolder+"/"+repoItem.repositoryItem.getName()+"-meta.xml");
@@ -467,7 +472,8 @@ public class GitHubSalesforceDeployController {
 	{
 		public String packageRepoPath;
 		public RepositoryItem pacakgeRepoDirectory;
-		public HashMap<String, DescribeMetadataObject> metadataFolderBySuffix;
+		public HashMap<String, DescribeMetadataObject> metadataDescribeBySuffix;
+		public HashMap<String, DescribeMetadataObject> metadataDescribeByFolder;
 	}
 
 	public static class TokenResult
@@ -587,26 +593,31 @@ public class GitHubSalesforceDeployController {
 					fileExtension = repo.getName().substring(extensionPosition + 1);
 			}
 			// Is this file extension recognised by Salesforce Metadata API?
-			DescribeMetadataObject metadataObject = repositoryScanResult.metadataFolderBySuffix.get(fileExtension);
+			DescribeMetadataObject metadataObject = repositoryScanResult.metadataDescribeBySuffix.get(fileExtension);
 			if(metadataObject==null)
 			{
-				// Is this a Document file which supports any file extension?
+				// Is this a file within a sub-directory of a metadata folder? 
+				//   e.g. src/documents/Eventbrite/Eventbrite_Sync_Logo.png
 				String[] folders = repo.getPath().split("/");
-				// A document file within a sub-directory of the 'documents' folder?
-				if(folders.length>3 && folders[folders.length-3].equals("documents"))
+				if(folders.length>3)
 				{
-					// Metadata describe for Document
-					metadataObject = repositoryScanResult.metadataFolderBySuffix.get(null);
+					// Metadata describe for containing folder?
+					metadataObject = repositoryScanResult.metadataDescribeByFolder.get(folders[folders.length-3]);
+					if(metadataObject==null)
+						continue;
 				}
-				// A file within the root of the 'document' folder?
-				else if(folders.length>2 && folders[folders.length-2].equals("documents"))
+				// Is this a metadata file for a sub-folder within the root of a metadata folder? 
+				//   (such as the XML metadata file for a folder in documents) 
+				//   e.g.  src/documents/Eventbrite
+				//         src/documents/Eventbrite-meta.xml <<<<
+				else if(folders.length>2)
 				{
-					// There is no DescribeMetadataObject for Folders metadata types, emulate one to represent a "documents" Folder
-					metadataObject = new DescribeMetadataObject();
-					metadataObject.setDirectoryName("documents");
-					metadataObject.setInFolder(false);
-					metadataObject.setXmlName("Document");
-					metadataObject.setMetaFile(true);
+					// Metadata describe for metadata folder?
+					metadataObject = repositoryScanResult.metadataDescribeByFolder.get(folders[folders.length-2]);
+					if(metadataObject==null)
+						continue;
+					// If package.xml is to be generated for this repo, ensure folders are added to the package items 
+					//   via special value in suffix, see scanFilesToDeploy method
 					metadataObject.setSuffix("dir");
 				}
 				else
