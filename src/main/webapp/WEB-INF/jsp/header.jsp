@@ -1,39 +1,24 @@
 <!doctype html>
 <html>
 <head>
-    <meta charset="utf-8">
     <title>GitHub Salesforce Deploy Tool</title>
-
-    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link href="/resources/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/resources/css/bootstrap-responsive.min.css" rel="stylesheet">
-
-    <!--
-      IMPORTANT:
-      This is Heroku specific styling. Remove to customize.
-    -->
-    <link href="/resources/css/heroku.css" rel="stylesheet">
-    <!-- /// -->
-
-    <style>
-        .btn-group {
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
-    </style>
-
+	<link rel="stylesheet" type="text/css" href="/resources/assets/styles/salesforce-lightning-design-system.css">
 </head>
 
-<body>
-<div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-        <div class="container">
-            <a href="/" class="brand">GitHub Salesforce Deploy Tool</a>
-            <a target="_new" href="http://andyinthecloud.com" class="brand" id="heroku">by <strong>andyinthecloud</strong></a>
-        </div>
-    </div>
-</div>
+<body style="margin:10px">
 
-<div class="container">
+<div class="slds-page-header" role="banner">
+	<div class="slds-grid">
+    	<div class="slds-col slds-has-flexi-truncate">
+			<div class="slds-media">
+				<div class="slds-media__figure">
+				  <svg aria-hidden="true" class="slds-icon slds-icon-action-upload slds-icon--large slds-p-around--x-small">
+				    <use xlink:href="/resources/assets/icons/action-sprite/svg/symbols.svg#upload"></use>
+				  </svg>
+				</div>
+				<div class="slds-media__body">
+				  <p class="slds-page-header__title slds-truncate slds-align-middle">GitHub Salesforce Deploy Tool</p>
+				  <p class="slds-text-body--small slds-page-header__info">Deploy directly from GitHub to Salesforce <a target="_new" href="http://andyinthecloud.com/category/githubsfdeploy/" class="brand" id="heroku"><strong>andyinthecloud</strong></a></p>
+				</div>
+			</div>
+		</div>

@@ -2,49 +2,134 @@
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <jsp:include page="header.jsp"/>
-	</p>
-    <c:if test="${error != null}">
-        <div class="alert">${error}</div>
-    </c:if>
-    <table class="table table-striped table-condensed">
-    	<c:if test="${githuburl != null}">
-        <tr>
-            <td><b>Manage GitHub Permissions:</b></td>
-            <td><a href="${githuburl}" target="_new">${githuburl}</a></td>
-        </tr>
-        </c:if>
-        <tr>
-            <td><b>Repository Name:</b></td>
-            <td><c:out value="${repositoryName}"/></td>
-        </tr>
-	    <c:if test="${repo != null}">
-	        <tr>
-	            <td><b>Repository Description:</b></td>
-	            <td>${repo.getDescription()}</td>
-	        </tr>
-	        <tr>
-	            <td><b>Repository URL:</b></td>
-	            <td><a href="${repo.getHtmlUrl()}" target="_new">${repo.getHtmlUrl()}</td>
-	        </tr>
+	    <c:if test="${githubcontents != null}">
+	   	<div class="slds-col slds-no-flex slds-align-bottom">
+	      <div class="slds-button-group" role="group">
+	        <button id="deploy" class="slds-button slds-button--neutral" onclick="GitHubDeploy.deploy();">Deploy</button>
+	      </div>
+	    </div>		
 	    </c:if>
-        <tr>
-            <td><b>Salesforce Organization Name:</b></td>
-            <td><c:out value="${userContext.getOrganizationName()}"/></td>
-        </tr>
-        <tr>
-            <td><b>Salesforce User Name:</b></td>
-            <td><c:out value="${userContext.getUserName()}"/></td>
-        </tr>
-    </table>
-    <c:if test="${githubcontents != null}">
-	    <div class="btn-group">
-	        <input id="deploy" value="Deploy" type="button" onclick="GitHubDeploy.deploy();" class="btn"/>
-	    </div>
-	    <pre id="deploystatus" style="display:none">
-	    </pre>
-		<pre id="githubcontents"></pre>
-    </c:if>
+	</div>
 </div>
+
+
+<c:if test="${error != null}">
+	<div class="slds-notify_container">
+		<div class="slds-notify slds-notify--alert slds-theme--alert-texture" role="alert">
+			<h2>${error}</h2>
+		</div>
+	</div>
+</c:if>
+&nbsp;
+
+<div class="slds-card">
+	<div class="slds-card__header slds-grid">
+		<div class="slds-media slds-media--center slds-has-flexi-truncate">
+			<div class="slds-media__figure">
+				<svg aria-hidden="true"
+					class="slds-icon slds-icon-action-share slds-icon--small">
+            	<use
+						xlink:href="/resources/assets/icons/action-sprite/svg/symbols.svg#share"></use>
+          	</svg>
+			</div>
+			<div class="slds-media__body">
+				<h2 class="slds-text-heading--small slds-truncate">From GitHub
+					Repository</h2>
+			</div>
+		</div>
+	</div>
+	<div class="slds-card__body">
+		<ul>
+			<li class="slds-tile slds-hint-parent">
+				<div class="slds-tile__detail">
+					<dl class="slds-dl--horizontal slds-text-body--small">
+						<c:if test="${githuburl != null}">
+							<dt class="slds-dl--horizontal__label">
+								<p class="slds-truncate">Manage GitHub Permissions:</p>
+							</dt>
+							<dd class="slds-dl--horizontal__detail slds-tile__meta">
+								<p class="slds-truncate">
+									<a href="${githuburl}" target="_new">${githuburl}</a>
+								</p>
+							</dd>
+						</c:if>
+						<dt class="slds-dl--horizontal__label">
+							<p class="slds-truncate">Name:</p>
+						</dt>
+						<dd class="slds-dl--horizontal__detail slds-tile__meta">
+							<p class="slds-truncate">${repositoryName}</p>
+						</dd>
+						<c:if test="${repo != null}">
+							<dt class="slds-dl--horizontal__label">
+								<p class="slds-truncate">Description:</p>
+							</dt>
+							<dd class="slds-dl--horizontal__detail slds-tile__meta">
+								<p class="slds-truncate">${repo.getDescription()}</p>
+							</dd>
+							<dt class="slds-dl--horizontal__label">
+								<p class="slds-truncate">URL:</p>
+							</dt>
+							<dd class="slds-dl--horizontal__detail slds-tile__meta">
+								<p class="slds-truncate">
+									<a href="${repo.getHtmlUrl()}" target="_new">${repo.getHtmlUrl()}</a>
+								</p>
+							</dd>
+						</c:if>
+					</dl>
+				</div>
+			</li>
+		</ul>
+	</div>
+</div>
+<div class="slds-card">
+	<div class="slds-card__header slds-grid">
+		<div class="slds-media slds-media--center slds-has-flexi-truncate">
+			<div class="slds-media__figure">
+				<svg aria-hidden="true"
+					class="slds-icon icon-utility-salesforce-1 slds-icon-text-default slds-icon--small">
+            		<use
+						xlink:href="/resources/assets/icons/utility-sprite/svg/symbols.svg#salesforce1"></use>
+          		</svg>
+			</div>
+			<div class="slds-media__body">
+				<h2 class="slds-text-heading--small slds-truncate">To
+					Salesforce Org</h2>
+			</div>
+		</div>
+	</div>
+	<div class="slds-card__body">
+		<ul>
+			<li class="slds-tile slds-hint-parent">
+				<div class="slds-tile__detail">
+					<dl class="slds-dl--horizontal slds-text-body--small">
+						<dt class="slds-dl--horizontal__label">
+							<p class="slds-truncate">Organization Name:</p>
+						</dt>
+						<dd class="slds-dl--horizontal__detail slds-tile__meta">
+							<p class="slds-truncate">
+								<c:out value="${userContext.getOrganizationName()}" />
+							</p>
+						</dd>
+						<dt class="slds-dl--horizontal__label">
+							<p class="slds-truncate">User Name:</p>
+						</dt>
+						<dd class="slds-dl--horizontal__detail slds-tile__meta">
+							<p class="slds-truncate">
+								<c:out value="${userContext.getUserName()}" />
+							</p>
+						</dd>
+					</dl>
+				</div>
+			</li>
+		</ul>
+	</div>
+</div>
+
+<c:if test="${githubcontents != null}">
+	<pre id="deploystatus" style="display: none"></pre>
+	<div id="githubcontents"></div>
+</c:if>
+
 <script src="/resources/js/jquery-1.7.1.min.js"></script>
 <c:if test="${githubcontents != null}">
 	<script type="text/javascript">
@@ -157,5 +242,6 @@
 
 	</script>
 </c:if>
+
 </body>
 </html>
