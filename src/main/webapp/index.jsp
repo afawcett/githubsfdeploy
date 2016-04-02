@@ -52,7 +52,9 @@ function updatebuttonhtml()
 	var repoOwner = $('#owner').val();
 	var repoName = $('#repo').val();
 	var buttonhtml =
-		'<a href="https://githubsfdeploy.herokuapp.com?owner=' + repoOwner +'&repo=' + repoName + '">\n' +
+		( $('#blogpaste').attr('checked') == 'checked' ? 
+			'<a href="https://githubsfdeploy.herokuapp.com?owner=' + repoOwner +'&repo=' + repoName + '">\n' :
+			'<a href="https://githubsfdeploy.herokuapp.com">\n') +					
 			'  <img alt="Deploy to Salesforce"\n' +
 			'       src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/src/main/webapp/resources/img/deploy.png">\n' +
 		'</a>';
@@ -60,8 +62,28 @@ function updatebuttonhtml()
 }
 function load()
 {
-	$('#owner').val($.url().param('owner'));
-	$('#repo').val($.url().param('repo'));
+	// Default from URL
+	var owner = $.url().param('owner');
+	var repo = $.url().param('repo');
+
+	// Check for GitHub referrer?			
+	if(owner==null && repo==null) {
+		var referrer = document.referrer;
+		// Note this is not passed from private repos or to http://localhost
+		if(referrer!=null && referrer.startsWith('https://github.com')) {		
+			var parts = referrer.split('/');
+			if(parts.length >= 5) {
+				owner = parts[3];
+				repo = parts[4];
+			}
+		}		
+	}
+	
+	// Default fields
+	$('#owner').val(owner);
+	$('#repo').val(repo);
+	
+	
 	$('#login').focus();
 	updatebuttonhtml();
 }
@@ -104,9 +126,10 @@ function load()
 		<p><input type="submit" id="login" value="Login to Salesforce" onclick="githubdeploy();return false;"/></p>
 		<p><label for="showbuttoncode" style="color:grey">Show GitHub README button code&nbsp;<input id="showbuttoncode" type="checkbox" onclick="togglebuttoncode();"/></label></p>
 		<div id="buttoncodepanel" style="display:none">
-			<p>Copy paste the HTML code below and insert into your GitHub README to display this button.</p>
+			<p>Copy paste the HTML code below and insert into your <b>GitHub README</b> to display the button, <u>if pasting into any other place see the note below</u>.</p>
 			<p><img src="/resources/img/deploy.png"/></p>
 			<span style="border: 1px grey"><pre id="buttonhtml"></pre></span>
+			<p><label for="blogpaste" style="color:grey"><b>IMPORTANT:</b> If your pasting into a blog or article, the button needs to know the repository name, check this box!&nbsp;<input id="blogpaste" type="checkbox" onclick="updatebuttonhtml();"/></label></p>
 		</div>
 	</form>
 </div>
