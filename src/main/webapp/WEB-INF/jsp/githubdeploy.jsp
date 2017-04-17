@@ -59,6 +59,12 @@
 						<dd class="slds-dl--horizontal__detail slds-tile__meta">
 							<p class="slds-truncate">${repositoryName}</p>
 						</dd>
+                        <dt class="slds-dl--horizontal__label">
+                            <p class="slds-truncate">Branch/Tag/Commit:</p>
+                        </dt>
+                        <dd class="slds-dl--horizontal__detail slds-tile__meta">
+                            <p class="slds-truncate">${ref}</p>
+                        </dd>                        
 						<c:if test="${repo != null}">
 							<dt class="slds-dl--horizontal__label">
 								<p class="slds-truncate">Description:</p>
@@ -71,7 +77,7 @@
 							</dt>
 							<dd class="slds-dl--horizontal__detail slds-tile__meta">
 								<p class="slds-truncate">
-									<a href="${repo.getHtmlUrl()}" target="_new">${repo.getHtmlUrl()}</a>
+                                    <a href="${repo.getHtmlUrl()}/tree/${ref}" target="_new">${repo.getHtmlUrl()}/tree/${ref}</a>
 								</p>
 							</dd>
 						</c:if>
@@ -149,14 +155,14 @@
 			render: function(container) {
 					if(container.repositoryItem!=null)
 						$('#githubcontents').append(
-							'<div><a target="_new" href="${repo.getHtmlUrl()}/blob/master/' +
+							'<div><a target="_new" href="${repo.getHtmlUrl()}/blob/${ref}/' +
 								container.repositoryItem.path + '">' + container.repositoryItem.path + '</a></div>');
 					for(fileIdx in container.repositoryItems)
 						if(container.repositoryItems[fileIdx].repositoryItem.type == 'dir')
 							GitHubDeploy.render(container.repositoryItems[fileIdx]);
 						else
 							$('#githubcontents').append(
-								'<div><a target="_new" href="${repo.getHtmlUrl()}/blob/master/' +
+								'<div><a target="_new" href="${repo.getHtmlUrl()}/blob/${ref}/' +
 									container.repositoryItems[fileIdx].repositoryItem.path + '">' +
 									container.repositoryItems[fileIdx].repositoryItem.path + '</a></div>');
 				},
@@ -200,7 +206,7 @@
 			checkStatus: function() {
 		            $.ajax({
 		                type: 'GET',
-		                url: window.location + '/checkstatus/' + GitHubDeploy.asyncResult.id,
+		                url: window.pathname + '/checkstatus/' + GitHubDeploy.asyncResult.id,
 		                contentType : 'application/json; charset=utf-8',
 		                dataType : 'json',
 		                success: function(data, textStatus, jqXHR) {
@@ -224,7 +230,7 @@
 					$('#deploy').attr('disabled', null);
 		            $.ajax({
 		                type: 'GET',
-		                url: window.location + '/checkdeploy/' + GitHubDeploy.asyncResult.id,
+		                url: window.pathname + '/checkdeploy/' + GitHubDeploy.asyncResult.id,
 		                contentType : 'application/json; charset=utf-8',
 		                dataType : 'json',
 		                success: function(data, textStatus, jqXHR) {

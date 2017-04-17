@@ -28,8 +28,6 @@ package com.andyinthecloud.githubsfdeploy.controller;
 
 import static org.eclipse.egit.github.core.client.IGitHubConstants.SEGMENT_REPOS;
 
-
-import java.net.HttpURLConnection;
 import java.net.URL;
 
 
@@ -137,9 +135,12 @@ public class GitHubSalesforceDeployController {
 		String redirectUrl = state;
 		return "redirect:" + redirectUrl;
 	}
-
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/{owner}/{repo}")
-	public String confirm(HttpServletRequest request,@PathVariable("owner") String repoOwner, @PathVariable("repo") String repoName,
+	public String confirm(HttpServletRequest request,
+			@PathVariable("owner") String repoOwner, 
+			@PathVariable("repo") String repoName, 
+			@RequestParam(defaultValue="master", required=false) String ref,			
 			HttpSession session ,Map<String, Object> map) throws Exception
 	{
 		try
@@ -150,7 +151,7 @@ public class GitHubSalesforceDeployController {
 			// Repository name
 			RepositoryId repoId = RepositoryId.create(repoOwner, repoName);
 			map.put("repositoryName", repoId.generateId());
-
+			map.put("ref", ref);
 
 			// Display user info
 			ForceServiceConnector forceConnector = new ForceServiceConnector(ForceServiceConnector.getThreadLocalConnectorConfig());
@@ -209,18 +210,27 @@ public class GitHubSalesforceDeployController {
 				scanRepository(
 					contentService,
 					repoId,
-					contentService.getContents(repoId),
+					ref,
+					contentService.getContents(repoId, null, ref),
 					repositoryContainer,
 					repositoryScanResult
 				);
 
-				ObjectMapper mapper = new ObjectMapper();
-				if(repositoryScanResult.pacakgeRepoDirectory!=null)
-					map.put("githubcontents", mapper.writeValueAsString(repositoryScanResult.pacakgeRepoDirectory));
-				else if(repositoryContainer.repositoryItems.size()>0)
-					map.put("githubcontents", mapper.writeValueAsString(repositoryContainer));
-				else
+				// Determine correct root to emit to the page
+				RepositoryItem githubcontents = null;
+				if(repositoryScanResult.pacakgeRepoDirectory!=null) {
+					githubcontents = repositoryScanResult.pacakgeRepoDirectory;
+				} else if(repositoryContainer.repositoryItems.size()>0) {
+					githubcontents = repositoryContainer;
+				}
+				
+				// Serialize JSON to page
+				if(githubcontents!=null) {
+					githubcontents.ref = ref; // Remember branch/tag/commit reference
+					map.put("githubcontents", new ObjectMapper().writeValueAsString(githubcontents));
+				} else {
 					map.put("error", "No Salesforce files found in repository.");
+				}
 			}
 			catch (RequestException e)
 			{
@@ -242,11 +252,16 @@ public class GitHubSalesforceDeployController {
 		}
 		return "githubdeploy";
 	}
-
+	
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, value = "/{owner}/{repo}")
-	public String deploy(@PathVariable("owner") String repoOwner, @PathVariable("repo") String repoName, @RequestBody String repoContentsJson,
-				HttpServletResponse response,Map<String,Object> map,HttpSession session) throws Exception
+	public String deploy(
+			@PathVariable("owner") String repoOwner, 
+			@PathVariable("repo") String repoName,
+			@RequestBody String repoContentsJson,
+			HttpServletResponse response,
+			Map<String,Object> map,
+			HttpSession session) throws Exception
 	{
 		String accessToken = (String)session.getAttribute(GITHUB_TOKEN);
 
@@ -314,7 +329,7 @@ public class GitHubSalesforceDeployController {
 		ZipInputStream zipIS;
 		try
 		{
-		   zipIS = contentService.getArchiveAsZip(repoId);
+		   zipIS = contentService.getArchiveAsZip(repoId, repositoryContainer.ref);
 		}catch(RequestException e)
 		{
 			session.removeAttribute(GITHUB_TOKEN);
@@ -418,7 +433,7 @@ public class GitHubSalesforceDeployController {
 		objectMapper.getSerializationConfig().addMixInAnnotations(AsyncResult.class, AsyncResultMixIn.class);
 		return objectMapper.writeValueAsString(asyncResult);
 	}
-
+	
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, value = "/{owner}/{repo}/checkstatus/{asyncId}")
 	public String checkStatus(@PathVariable("asyncId") String asyncId) throws Exception
@@ -431,7 +446,7 @@ public class GitHubSalesforceDeployController {
 		objectMapper.getSerializationConfig().addMixInAnnotations(AsyncResult.class, AsyncResultMixIn.class);
 		return objectMapper.writeValueAsString(asyncResult);
 	}
-
+	
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, value = "/{owner}/{repo}/checkdeploy/{asyncId}")
 	public String checkDeploy(@PathVariable("asyncId") String asyncId) throws Exception
@@ -459,6 +474,7 @@ public class GitHubSalesforceDeployController {
 	 */
 	public static class RepositoryItem
 	{
+		public String ref;
 		public RepositoryContents repositoryItem;
 		public ArrayList<RepositoryItem> repositoryItems;
 		public String metadataFolder;
@@ -497,13 +513,17 @@ public class GitHubSalesforceDeployController {
 			super(client);
 		}
 
-		public ZipInputStream getArchiveAsZip(IRepositoryIdProvider repository)
+		public ZipInputStream getArchiveAsZip(IRepositoryIdProvider repository, String ref)
 			throws Exception
 		{
+			// https://developer.github.com/v3/repos/contents/#get-archive-link
 			String id = getId(repository);
 			StringBuilder uri = new StringBuilder(SEGMENT_REPOS);
 			uri.append('/').append(id);
 			uri.append('/').append("zipball");
+			if(ref!=null) {
+				uri.append('/').append(ref);
+			}
 			GitHubRequest request = createRequest();
 			request.setUri(uri);
 			return new ZipInputStream(getClient().getStream(request));
@@ -538,9 +558,7 @@ public class GitHubSalesforceDeployController {
 
 		private GitHubRequest applyClientIdAndSecret(GitHubRequest request)
 		{
-			Map<String, String> params = request.getParams();
-			if(params==null)
-				params = new HashMap<String, String>();
+			Map<String, String> params = new HashMap<String, String>(request.getParams());
 			params.put("client_id", clientId);
 			params.put("client_secret", clientSecret);
 			request.setParams(params);
@@ -558,7 +576,7 @@ public class GitHubSalesforceDeployController {
 	 * @param repositoryContainer
 	 * @throws Exception
 	 */
-	private static void scanRepository(ContentsService contentService, RepositoryId repoId, List<RepositoryContents> contents, RepositoryItem repositoryContainer, RepositoryScanResult repositoryScanResult)
+	private static void scanRepository(ContentsService contentService, RepositoryId repoId, String ref, List<RepositoryContents> contents, RepositoryItem repositoryContainer, RepositoryScanResult repositoryScanResult)
 			throws Exception
 	{
 		// Process files first
@@ -641,7 +659,7 @@ public class GitHubSalesforceDeployController {
 				RepositoryItem repositoryItem = new RepositoryItem();
 				repositoryItem.repositoryItem = repo;
 				repositoryItem.repositoryItems = new ArrayList<RepositoryItem>();
-				scanRepository(contentService, repoId, contentService.getContents(repoId, repo.getPath().replace(" ", "%20")), repositoryItem, repositoryScanResult);
+				scanRepository(contentService, repoId, ref, contentService.getContents(repoId, repo.getPath().replace(" ", "%20"), ref), repositoryItem, repositoryScanResult);
 				if(repositoryScanResult.packageRepoPath!=null && repo.getPath().equals(repositoryScanResult.packageRepoPath))
 					repositoryScanResult.pacakgeRepoDirectory = repositoryItem;
 				if(repositoryItem.repositoryItems.size()>0)

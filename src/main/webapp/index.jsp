@@ -11,11 +11,12 @@
 var appName = ''
 function githubdeploy()
 {
+    var ref = $('#ref').val();    
 	var sfdeployurl =
 		$('#production').attr('checked') ?
 			'https://githubsfdeploy.herokuapp.com/app/githubdeploy' :
 			'https://githubsfdeploy-sandbox.herokuapp.com/app/githubdeploy';
-	sfdeployurl+= '/' + $('#owner').val() + '/' + $('#repo').val();
+	sfdeployurl+= '/' + $('#owner').val() + '/' + $('#repo').val() + (ref != '' ? '?ref=' + ref : '');
 	window.location = sfdeployurl;
 }
 function togglebuttoncode()
@@ -30,9 +31,10 @@ function updatebuttonhtml()
 {
 	var repoOwner = $('#owner').val();
 	var repoName = $('#repo').val();
+	var ref = $('#ref').val();
 	var buttonhtml =
 		( $('#blogpaste').attr('checked') == 'checked' ? 
-			'<a href="https://githubsfdeploy.herokuapp.com?owner=' + repoOwner +'&repo=' + repoName + '">\n' :
+			'<a href="https://githubsfdeploy.herokuapp.com?owner=' + repoOwner +'&repo=' + repoName + (ref!='' ? '&ref=' + ref : '') + '">\n' :
 			'<a href="https://githubsfdeploy.herokuapp.com">\n') +					
 			'  <img alt="Deploy to Salesforce"\n' +
 			'       src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">\n' +
@@ -44,16 +46,26 @@ function load()
 	// Default from URL
 	var owner = $.url().param('owner');
 	var repo = $.url().param('repo');
+	var ref = $.url().param('ref');
 
 	// Check for GitHub referrer?			
 	if(owner==null && repo==null) {
 		var referrer = document.referrer;
 		// Note this is not passed from private repos or to http://localhost
+		// https://github.com/afawcett/githubdeploytest
 		if(referrer!=null && referrer.startsWith('https://github.com')) {		
 			var parts = referrer.split('/');
 			if(parts.length >= 5) {
 				owner = parts[3];
 				repo = parts[4];
+			}
+			if(parts.length >= 7) {
+			    // Branch/Tag/Release?
+                // https://github.com/afawcett/githubdeploytest/tree/BranchA
+                // https://github.com/afawcett/githubdeploytest/tree/Branch/B
+			    if(parts[5] == 'tree') {
+			        ref = referrer.substr(referrer.indexOf('/tree/')+6);
+			    }
 			}
 		}		
 	}
@@ -61,6 +73,7 @@ function load()
 	// Default fields
 	$('#owner').val(owner);
 	$('#repo').val(repo);
+	$('#ref').val(ref);
 	
 	
 	$('#login').focus();
@@ -121,6 +134,12 @@ function load()
 	<div class="slds-form-element__control">
 	<input id="repo" oninput="updatebuttonhtml();"/>
 	</div>
+</div>
+<div class="slds-form-element">
+    <label class="slds-form-element__label">Branch/Tag/Commit:</label>
+    <div class="slds-form-element__control">
+    <input id="ref" oninput="updatebuttonhtml();"/>
+    </div>
 </div>
 <div class="slds-form-element">
     <div class="slds-form-element__control">
