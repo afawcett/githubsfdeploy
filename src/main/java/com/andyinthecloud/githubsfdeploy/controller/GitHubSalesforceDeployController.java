@@ -178,10 +178,15 @@ public class GitHubSalesforceDeployController {
 			}
 			catch(Exception e)
 			{
-				if(accessToken == null)
-					return "redirect:" + "https://github.com/login/oauth/authorize?client_id=" + System.getenv(GITHUB_CLIENT_ID) + "&scope=repo&state=" + request.getRequestURI();
-				else
-					map.put("error", "Failed to retrive GitHub repository details : " + e.toString());
+				if(accessToken == null) {
+					StringBuffer requestURL = request.getRequestURL();
+				    String queryString = request.getQueryString();
+				    String redirectUrl = queryString == null ? requestURL.toString() : requestURL.append('?').append(queryString).toString();
+					return "redirect:" + "https://github.com/login/oauth/authorize?client_id=" + System.getenv(GITHUB_CLIENT_ID) + "&scope=repo&state=" + redirectUrl;					
+				}
+				else {
+					map.put("error", "Failed to retrive GitHub repository details : " + e.toString());					
+				}
 			}
 
 			// Prepare Salesforce metadata metadata for repository scan
