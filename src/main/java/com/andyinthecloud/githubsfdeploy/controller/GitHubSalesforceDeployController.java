@@ -563,7 +563,10 @@ public class GitHubSalesforceDeployController {
 
 		private GitHubRequest applyClientIdAndSecret(GitHubRequest request)
 		{
-			Map<String, String> params = new HashMap<String, String>(request.getParams());
+			Map<String, String> params = 
+				request.getParams()!=null ? 
+					new HashMap<String, String>(request.getParams()) : 
+					new HashMap<String, String>();
 			params.put("client_id", clientId);
 			params.put("client_secret", clientSecret);
 			request.setParams(params);
