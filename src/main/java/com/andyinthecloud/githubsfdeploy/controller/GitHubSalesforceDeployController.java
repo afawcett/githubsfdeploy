@@ -305,7 +305,7 @@ public class GitHubSalesforceDeployController {
 		{
 			// Construct package manifest and files to deploy map by path
 			Package packageManifest = new Package();
-			packageManifest.setVersion("36.0"); // TODO: Make version configurable / auto
+			packageManifest.setVersion("41.0"); // TODO: Make version configurable / auto
 			List<PackageTypeMembers> packageTypeMembersList = new ArrayList<PackageTypeMembers>();
 			scanFilesToDeploy(filesToDeploy, typeMembersByType, repositoryContainer);
 			for(String metadataType : typeMembersByType.keySet())
