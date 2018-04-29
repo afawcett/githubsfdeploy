@@ -16,7 +16,7 @@ function githubdeploy()
 
 	var sfdeployurl =
 		$('#production').attr('checked') ?
-			'http://localhost:5000/app/githubdeploy' :
+			'https://githubsfdeploy.herokuapp.com/app/githubdeploy' :
 			'https://githubsfdeploy-sandbox.herokuapp.com/app/githubdeploy';
 	sfdeployurl+= '/' + $('#owner').val() + '/' + $('#repo').val() + (ref != '' ? '?ref=' + ref : '');
 	if(action == 'undeploy') {
