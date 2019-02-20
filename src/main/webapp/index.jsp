@@ -123,6 +123,7 @@ function load()
 	</label>
 	</div>
 </div>
+<!--
 <div class="slds-form-element">
 	<label class="slds-form-element__label">Owner:</label>
 	<div class="slds-form-element__control">
@@ -166,7 +167,7 @@ function load()
 	<pre id="buttonhtml"></pre>
 	<p><img src="/resources/img/deploy.png"/></p>
 </div>
-
+-->
 </form>
 
 </body>
