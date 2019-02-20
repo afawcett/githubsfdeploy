@@ -148,6 +148,7 @@ public class GitHubSalesforceDeployController {
 			map.put("repo", null);
 			map.put("githubcontents", null);
 			//String accessToken = (String)session.getAttribute(GITHUB_TOKEN);
+			//Set Personal Token in GitHub to avoid logging in.
 			String accessToken = (String)System.getenv(GITHUB_TOKEN);
 
 			// Repository name
