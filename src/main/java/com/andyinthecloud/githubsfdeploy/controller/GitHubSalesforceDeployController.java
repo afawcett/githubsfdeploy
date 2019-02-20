@@ -95,7 +95,7 @@ public class GitHubSalesforceDeployController {
 	// Allocated via your GitHub Account Settings, set as environment vars, provides increased limits per hour for GitHub API calls
 	private static String GITHUB_CLIENT_ID = "GITHUB_CLIENT_ID";
 	private static String GITHUB_CLIENT_SECRET = "GITHUB_CLIENT_SECRET";
-	private static String GITHUB_TOKEN = "ghtoken";
+	private static String GITHUB_TOKEN = System.getenv(GITHUB_TOKEN);
 
 	@RequestMapping(method = RequestMethod.GET, value="/logoutgh")
 	public String logoutgh(HttpSession session,@RequestParam(required=false) final String retUrl)
