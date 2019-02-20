@@ -7,8 +7,8 @@
     <version>0.0.2-SNAPSHOT</version>
 
     <properties>
-        <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
-        <org.slf4j.version>1.6.2</org.slf4j.version>
+        <org.springframework.version>5.1.5.RELEASE</org.springframework.version>
+        <org.slf4j.version>1.7.25</org.slf4j.version>
         <com.github.ryanbrainard.richsobjects.version>0.2-BETA</com.github.ryanbrainard.richsobjects.version>
         <com.force.sdk.version>22.0.9-BETA</com.force.sdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -18,7 +18,7 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
+            <version>4.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -102,20 +102,20 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.8.0</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.2</version>
+                <version>3.2.2</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.4</version>
+                <version>3.1.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -127,7 +127,7 @@
                                 <artifactItem>
                                     <groupId>com.github.jsimone</groupId>
                                     <artifactId>webapp-runner</artifactId>
-                                    <version>8.0.30.2</version>
+                                    <version>9.0.16.0</version>
                                     <destFileName>webapp-runner.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
