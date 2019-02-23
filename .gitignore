@@ -7,3 +7,5 @@
 /*.iml
 .env
 /.DS_Store
+.vscode
+.DS_Store
