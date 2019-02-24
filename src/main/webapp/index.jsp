@@ -11,12 +11,17 @@
 var appName = ''
 function githubdeploy()
 {
-    var ref = $('#ref').val();    
+    var ref = $('#ref').val();
+	var action = $.url().param('action');
+
 	var sfdeployurl =
 		$('#production').attr('checked') ?
 			'https://githubsfdeploy.herokuapp.com/app/githubdeploy' :
 			'https://githubsfdeploy-sandbox.herokuapp.com/app/githubdeploy';
 	sfdeployurl+= '/' + $('#owner').val() + '/' + $('#repo').val() + (ref != '' ? '?ref=' + ref : '');
+	if(action == 'undeploy') {
+		sfdeployurl+= ref != '' ? '&action=' + action : '?action=' + action;
+	}
 	window.location = sfdeployurl;
 }
 function togglebuttoncode()
@@ -33,13 +38,22 @@ function updatebuttonhtml()
 	var repoName = $('#repo').val();
 	var ref = $('#ref').val();
 	var buttonhtml =
-		( $('#blogpaste').attr('checked') == 'checked' ? 
+		( $('#blogpaste').attr('checked') == 'checked' ?
 			'<a href="https://githubsfdeploy.herokuapp.com?owner=' + repoOwner +'&repo=' + repoName + (ref!='' ? '&ref=' + ref : '') + '">\n' :
-			'<a href="https://githubsfdeploy.herokuapp.com">\n') +					
+			'<a href="https://githubsfdeploy.herokuapp.com">\n') +
 			'  <img alt="Deploy to Salesforce"\n' +
 			'       src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">\n' +
 		'</a>';
+
+	var buttonundeployhtml =
+		( $('#blogpaste').attr('checked') == 'checked' ?
+			'<a href="https://githubsfdeploy.herokuapp.com?owner=' + repoOwner +'&repo=' + repoName + '&action=undeploy' + (ref!='' ? '&ref=' + ref : '') + '">\n' :
+			'<a href="https://githubsfdeploy.herokuapp.com?action=undeploy">\n') +
+			'  <img alt="Un-Deploy from Salesforce"\n' +
+			'       src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/undeploy.png">\n' +
+		'</a>';
 	$('#buttonhtml').text(buttonhtml);
+	$('#buttonundeployhtml').text(buttonundeployhtml);
 }
 function load()
 {
@@ -48,12 +62,12 @@ function load()
 	var repo = $.url().param('repo');
 	var ref = $.url().param('ref');
 
-	// Check for GitHub referrer?			
+	// Check for GitHub referrer?
 	if(owner==null && repo==null) {
 		var referrer = document.referrer;
 		// Note this is not passed from private repos or to http://localhost
 		// https://github.com/afawcett/githubdeploytest
-		if(referrer!=null && referrer.startsWith('https://github.com')) {		
+		if(referrer!=null && referrer.startsWith('https://github.com')) {
 			var parts = referrer.split('/');
 			if(parts.length >= 5) {
 				owner = parts[3];
@@ -67,15 +81,14 @@ function load()
 			        ref = referrer.substr(referrer.indexOf('/tree/')+6);
 			    }
 			}
-		}		
+		}
 	}
-	
+
 	// Default fields
 	$('#owner').val(owner);
 	$('#repo').val(repo);
 	$('#ref').val(ref);
-	
-	
+
 	$('#login').focus();
 	updatebuttonhtml();
 }
@@ -97,13 +110,13 @@ function load()
 				  <p class="slds-page-header__title slds-truncate slds-align-middle">GitHub Salesforce Deploy Tool</p>
 				  <p class="slds-text-body--small slds-page-header__info">Deploy directly from GitHub to Salesforce <a target="_new" href="http://andyinthecloud.com/category/githubsfdeploy/" class="brand" id="heroku"><strong>andyinthecloud</strong></a></p>
 				</div>
-			</div>			
+			</div>
 		</div>
 	   	<div class="slds-col slds-no-flex slds-align-bottom">
 	      <div class="slds-button-group" role="group">
 	      	<input type="submit" id="login" value="Login to Salesforce" class="slds-button slds-button--neutral" onclick="githubdeploy();return false;"/>
 	      </div>
-	    </div>				
+	    </div>
 	</div>
 </div>
 &nbsp;
@@ -165,6 +178,10 @@ function load()
 	</div>
 	<pre id="buttonhtml"></pre>
 	<p><img src="/resources/img/deploy.png"/></p>
+	&nbsp;
+	<p><pre id="buttonundeployhtml"></pre></p>
+	<p><img src="/resources/img/undeploy.png"/></p>
+
 </div>
 
 </form>

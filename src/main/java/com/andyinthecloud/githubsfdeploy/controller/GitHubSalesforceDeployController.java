@@ -29,12 +29,9 @@ package com.andyinthecloud.githubsfdeploy.controller;
 import static org.eclipse.egit.github.core.client.IGitHubConstants.SEGMENT_REPOS;
 
 import java.net.URL;
-
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -135,12 +132,13 @@ public class GitHubSalesforceDeployController {
 		String redirectUrl = state;
 		return "redirect:" + redirectUrl;
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET, value = "/{owner}/{repo}")
 	public String confirm(HttpServletRequest request,
-			@PathVariable("owner") String repoOwner, 
-			@PathVariable("repo") String repoName, 
-			@RequestParam(defaultValue="master", required=false) String ref,			
+			@PathVariable("owner") String repoOwner,
+			@PathVariable("repo") String repoName,
+			@RequestParam(defaultValue="master", required=false) String ref,
+			@RequestParam(defaultValue="deploy", required=false) String action,
 			HttpSession session ,Map<String, Object> map) throws Exception
 	{
 		try
@@ -182,10 +180,10 @@ public class GitHubSalesforceDeployController {
 					StringBuffer requestURL = request.getRequestURL();
 				    String queryString = request.getQueryString();
 				    String redirectUrl = queryString == null ? requestURL.toString() : requestURL.append('?').append(queryString).toString();
-					return "redirect:" + "https://github.com/login/oauth/authorize?client_id=" + System.getenv(GITHUB_CLIENT_ID) + "&scope=repo&state=" + redirectUrl;					
+					return "redirect:" + "https://github.com/login/oauth/authorize?client_id=" + System.getenv(GITHUB_CLIENT_ID) + "&scope=repo&state=" + redirectUrl;
 				}
 				else {
-					map.put("error", "Failed to retrive GitHub repository details : " + e.toString());					
+					map.put("error", "Failed to retrive GitHub repository details : " + e.toString());
 				}
 			}
 
@@ -203,7 +201,7 @@ public class GitHubSalesforceDeployController {
 				} else {
 					repositoryScanResult.metadataDescribeBySuffix.put(describeObject.getSuffix(), describeObject);
 					if(describeObject.getMetaFile())
-						repositoryScanResult.metadataDescribeBySuffix.put(describeObject.getSuffix() + "-meta.xml", describeObject);					
+						repositoryScanResult.metadataDescribeBySuffix.put(describeObject.getSuffix() + "-meta.xml", describeObject);
 				}
 			}
 
@@ -212,14 +210,26 @@ public class GitHubSalesforceDeployController {
 
 			try
 			{
-				scanRepository(
-					contentService,
-					repoId,
-					ref,
-					contentService.getContents(repoId, null, ref),
-					repositoryContainer,
-					repositoryScanResult
-				);
+				if(action == null || action.equals("deploy")) {
+					scanRepository(
+						contentService,
+						repoId,
+						ref,
+						contentService.getContents(repoId, null, ref),
+						repositoryContainer,
+						repositoryScanResult
+					);
+				}
+				else if(action.equals("undeploy")) {
+					scanDestructiveRepository(
+						contentService,
+						repoId,
+						ref,
+						contentService.getContents(repoId, null, ref),
+						repositoryContainer,
+						repositoryScanResult
+					);
+				}
 
 				// Determine correct root to emit to the page
 				RepositoryItem githubcontents = null;
@@ -228,7 +238,7 @@ public class GitHubSalesforceDeployController {
 				} else if(repositoryContainer.repositoryItems.size()>0) {
 					githubcontents = repositoryContainer;
 				}
-				
+
 				// Serialize JSON to page
 				if(githubcontents!=null) {
 					githubcontents.ref = ref; // Remember branch/tag/commit reference
@@ -247,7 +257,7 @@ public class GitHubSalesforceDeployController {
 		}
 		catch (ForceOAuthSessionExpirationException e)
 		{
-			return "redirect:/logout";			
+			return "redirect:/logout";
 		}
 		catch (Exception e)
 		{
@@ -257,11 +267,11 @@ public class GitHubSalesforceDeployController {
 		}
 		return "githubdeploy";
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, value = "/{owner}/{repo}")
 	public String deploy(
-			@PathVariable("owner") String repoOwner, 
+			@PathVariable("owner") String repoOwner,
 			@PathVariable("repo") String repoName,
 			@RequestBody String repoContentsJson,
 			HttpServletResponse response,
@@ -438,7 +448,7 @@ public class GitHubSalesforceDeployController {
 		objectMapper.getSerializationConfig().addMixInAnnotations(AsyncResult.class, AsyncResultMixIn.class);
 		return objectMapper.writeValueAsString(asyncResult);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, value = "/{owner}/{repo}/checkstatus/{asyncId}")
 	public String checkStatus(@PathVariable("asyncId") String asyncId) throws Exception
@@ -451,7 +461,7 @@ public class GitHubSalesforceDeployController {
 		objectMapper.getSerializationConfig().addMixInAnnotations(AsyncResult.class, AsyncResultMixIn.class);
 		return objectMapper.writeValueAsString(asyncResult);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, value = "/{owner}/{repo}/checkdeploy/{asyncId}")
 	public String checkDeploy(@PathVariable("asyncId") String asyncId) throws Exception
@@ -563,9 +573,9 @@ public class GitHubSalesforceDeployController {
 
 		private GitHubRequest applyClientIdAndSecret(GitHubRequest request)
 		{
-			Map<String, String> params = 
-				request.getParams()!=null ? 
-					new HashMap<String, String>(request.getParams()) : 
+			Map<String, String> params =
+				request.getParams()!=null ?
+					new HashMap<String, String>(request.getParams()) :
 					new HashMap<String, String>();
 			params.put("client_id", clientId);
 			params.put("client_secret", clientSecret);
@@ -622,7 +632,7 @@ public class GitHubSalesforceDeployController {
 			DescribeMetadataObject metadataObject = repositoryScanResult.metadataDescribeBySuffix.get(fileExtension);
 			if(metadataObject==null)
 			{
-				// Is this a file within a sub-directory of a metadata folder? 
+				// Is this a file within a sub-directory of a metadata folder?
 				//   e.g. src/documents/Eventbrite/Eventbrite_Sync_Logo.png
 				String[] folders = repo.getPath().split("/");
 				if(folders.length>3)
@@ -632,8 +642,8 @@ public class GitHubSalesforceDeployController {
 					if(metadataObject==null)
 						continue;
 				}
-				// Is this a metadata file for a sub-folder within the root of a metadata folder? 
-				//   (such as the XML metadata file for a folder in documents) 
+				// Is this a metadata file for a sub-folder within the root of a metadata folder?
+				//   (such as the XML metadata file for a folder in documents)
 				//   e.g.  src/documents/Eventbrite
 				//         src/documents/Eventbrite-meta.xml <<<<
 				else if(folders.length>2)
@@ -642,7 +652,7 @@ public class GitHubSalesforceDeployController {
 					metadataObject = repositoryScanResult.metadataDescribeByFolder.get(folders[folders.length-2]);
 					if(metadataObject==null)
 						continue;
-					// If package.xml is to be generated for this repo, ensure folders are added to the package items 
+					// If package.xml is to be generated for this repo, ensure folders are added to the package items
 					//   via special value in suffix, see scanFilesToDeploy method
 					metadataObject.setSuffix("dir");
 				}
@@ -662,7 +672,7 @@ public class GitHubSalesforceDeployController {
 		// Process directories
 		for(RepositoryContents repo : contents)
 		{
-			if(repo.getType().equals("dir"))
+			if(repo.getType().equals("dir") && !repo.getName().equals("destructiveChanges"))
 			{
 				RepositoryItem repositoryItem = new RepositoryItem();
 				repositoryItem.repositoryItem = repo;
@@ -671,6 +681,68 @@ public class GitHubSalesforceDeployController {
 				if(repositoryScanResult.packageRepoPath!=null && repo.getPath().equals(repositoryScanResult.packageRepoPath))
 					repositoryScanResult.pacakgeRepoDirectory = repositoryItem;
 				if(repositoryItem.repositoryItems.size()>0)
+					repositoryContainer.repositoryItems.add(repositoryItem);
+			}
+		}
+	}
+
+	/**
+	 * Discovers the contents of a GitHub repository for destructiveChanges
+	 * @param contentService
+	 * @param repoId
+	 * @param contents
+	 * @param repositoryContainer
+	 * @throws Exception
+	 */
+	private static void scanDestructiveRepository(ContentsService contentService, RepositoryId repoId, String ref, List<RepositoryContents> contents, RepositoryItem repositoryContainer, RepositoryScanResult repositoryScanResult)
+			throws Exception
+	{
+		// Process destructiveChanges/package.xml first
+		for(RepositoryContents repo : contents)
+		{
+			// Skip directories for now, see below
+			if(repo.getType().equals("dir"))
+				continue;
+
+			if(repo.getPath().endsWith("destructiveChanges/package.xml")) {
+
+				repositoryScanResult.packageRepoPath = repo.getPath().substring(0, repo.getPath().length() - (repo.getName().length() ));
+				if(repositoryScanResult.packageRepoPath.endsWith("/"))
+					repositoryScanResult.packageRepoPath = repositoryScanResult.packageRepoPath.substring(0, repositoryScanResult.packageRepoPath.length() - 1);
+				RepositoryItem repositoryItem = new RepositoryItem();
+				repositoryItem.repositoryItem = repo;
+				repositoryContainer.repositoryItems.add(repositoryItem);
+				continue;
+			}
+		}
+		// Process destructiveChanges/destructiveChanges.xml next
+		for(RepositoryContents repo : contents)
+		{
+			// Skip directories for now, see below
+			if(repo.getType().equals("dir"))
+				continue;
+
+			if(repo.getPath().endsWith("destructiveChanges/destructiveChanges.xml")) {
+				RepositoryItem repositoryItem = new RepositoryItem();
+				repositoryItem.repositoryItem = repo;
+				repositoryContainer.repositoryItems.add(repositoryItem);
+				continue;
+			}
+		}
+
+		// Process directories
+		for(RepositoryContents repo : contents)
+		{
+			if(repo.getType().equals("dir"))
+			{
+				RepositoryItem repositoryItem = new RepositoryItem();
+
+				repositoryItem.repositoryItem = repo;
+				repositoryItem.repositoryItems = new ArrayList<RepositoryItem>();
+				scanDestructiveRepository(contentService, repoId, ref, contentService.getContents(repoId, repo.getPath().replace(" ", "%20"), ref), repositoryItem, repositoryScanResult);
+				if(repositoryScanResult.packageRepoPath!=null && repo.getPath().equals(repositoryScanResult.packageRepoPath))
+					repositoryScanResult.pacakgeRepoDirectory = repositoryItem;
+				if(repositoryItem.repositoryItems.size()>0 && repo.getPath().equals("destructiveChanges"))
 					repositoryContainer.repositoryItems.add(repositoryItem);
 			}
 		}
