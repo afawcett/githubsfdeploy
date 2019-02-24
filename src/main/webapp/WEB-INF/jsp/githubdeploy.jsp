@@ -136,12 +136,9 @@
 	<div id="githubcontents"></div>
 </c:if>
 
-<script   src="https://code.jquery.com/jquery-3.3.1.min.js"   
-integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="   
-crossorigin="anonymous"></script>
-
 <c:if test="${githubcontents != null}">
-	<script type="text/javascript">
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<script>
 
 		var GitHubDeploy = {
 
@@ -253,4 +250,5 @@ crossorigin="anonymous"></script>
 </c:if>
 
 </body>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 </html>
