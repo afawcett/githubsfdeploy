@@ -2,7 +2,7 @@
 
 Read more about this tool at my blog post [here](http://andyinthecloud.com/2013/09/24/deploy-direct-from-github-to-salesforce/). 
 
-**Update: 29 February 2020:** Added support for SFDX formatted repositories. 
+**Update: 29 February 2020:** Added support for SFDX formatted repositories. Note currently it only supports the default package directory as defined in the sfdx-project.json file.
 
 **Update: 3 April 2016:** Maintainance to move to Cedar-14 on Heroku, enhancements, bug fixes and a UI restlye, see [blog](http://andyinthecloud.com/2016/04/02/github-salesforce-deploy-lightning-edition/) for more details.
 
