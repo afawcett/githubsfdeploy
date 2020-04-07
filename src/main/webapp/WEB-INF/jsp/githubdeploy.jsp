@@ -157,14 +157,22 @@
 						$('#githubcontents').append(
 							'<div><a target="_new" href="${repo.getHtmlUrl()}/blob/${ref}/' +
 								container.repositoryItem.path + '">' + container.repositoryItem.path + '</a></div>');
-					for(fileIdx in container.repositoryItems)
-						if(container.repositoryItems[fileIdx].repositoryItem.type == 'dir')
+					for(fileIdx in container.repositoryItems) {
+						if(container.repositoryItems[fileIdx].repositoryItem.type == 'dir') {
 							GitHubDeploy.render(container.repositoryItems[fileIdx]);
-						else
-							$('#githubcontents').append(
-								'<div><a target="_new" href="${repo.getHtmlUrl()}/blob/${ref}/' +
-									container.repositoryItems[fileIdx].repositoryItem.path + '">' +
-									container.repositoryItems[fileIdx].repositoryItem.path + '</a></div>');
+						}  else {
+							if(GitHubDeploy.contents.downloadId!=null) {
+								// Since SFDX repos go through conversion there is no mapping back to original repo file
+								$('#githubcontents').append(
+									'<div>' + container.repositoryItems[fileIdx].repositoryItem.path + '</div>');	
+							} else {
+								$('#githubcontents').append(
+									'<div><a target="_new" href="${repo.getHtmlUrl()}/blob/${ref}/' +
+										container.repositoryItems[fileIdx].repositoryItem.path + '">' +
+										container.repositoryItems[fileIdx].repositoryItem.path + '</a></div>');	
+							}
+						}
+					}
 				},
 
 			// Deploy

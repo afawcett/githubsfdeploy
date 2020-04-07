@@ -620,10 +620,9 @@ public class GitHubSalesforceDeployController {
 				repositoryContainer.repositoryItems.clear();
 				// Download contents to temp dir
 				Path tempDir = Files.createTempDirectory(null);
-				System.out.println(tempDir.toString());
 				ZipInputStream zipIS;
 				// Download 
-				zipIS = contentService.getArchiveAsZip(repoId, repositoryContainer.ref);
+				zipIS = contentService.getArchiveAsZip(repoId, ref);
 				// Write to temp dir
 				byte[] buffer = new byte[2048];
 				ZipEntry entry;
@@ -652,8 +651,12 @@ public class GitHubSalesforceDeployController {
 				Process process = Runtime.getRuntime().exec("sfdx force:source:convert --outputdir deploy", null, tempDir.toFile());;
 				StringBuilder output = new StringBuilder();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));	
+				BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 				String line;
 				while ((line = reader.readLine()) != null) {
+					output.append(line + "\n");
+				}
+				while ((line = stdError.readLine()) != null) {
 					output.append(line + "\n");
 				}
 				int exitVal = process.waitFor();
