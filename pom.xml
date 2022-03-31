@@ -7,7 +7,7 @@
     <version>0.0.2-SNAPSHOT</version>
 
     <properties>
-        <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
+        <org.springframework.version>5.3.18</org.springframework.version>
         <org.slf4j.version>1.6.2</org.slf4j.version>
         <com.github.ryanbrainard.richsobjects.version>0.2-BETA</com.github.ryanbrainard.richsobjects.version>
         <com.force.sdk.version>22.0.9-BETA</com.force.sdk.version>
