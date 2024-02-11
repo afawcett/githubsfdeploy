@@ -38,9 +38,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -523,6 +525,12 @@ public class GitHubSalesforceDeployController {
 		public String error_uri;
 	}
 
+	public static class GitSubModule {
+		public String path;
+		public String url;
+		public String branch;
+	}
+
 
 
 	/**
@@ -605,6 +613,7 @@ public class GitHubSalesforceDeployController {
 	{
 		// Process files first
 		Boolean convertedDXProject = false;
+		List<GitSubModule> subModules = new ArrayList<GitSubModule>();
 		for(RepositoryContents repo : contents)
 		{
 			// Skip directories for now, see below
@@ -613,6 +622,44 @@ public class GitHubSalesforceDeployController {
 			// Skip README.md (suffix overlaps with Custom Metadata!)
 			if(repo.getName().equalsIgnoreCase("readme.md"))
 				continue;
+			if (repo.getName().equalsIgnoreCase(".gitmodules")) {
+				// get the contents of the file so we can import the submodule
+				// ONLY SUPPORTS SUBMODULES HOST ON GITHUB
+				List<RepositoryContents> submodule = contentService.getContents(repoId, repo.getPath(), ref);
+
+				// strip the newline characters out of the encoded content
+				byte[] decoded = Base64.getDecoder().decode(
+						submodule.get(0).getContent().replace("\n", ""));
+				String decodedStr = new String(decoded, StandardCharsets.UTF_8);
+				// process the .gitmodules file contents, line by line
+				// this is a very naive parser implementation
+				// will probably have a variety of bugs, maybe find a lib?
+				GitSubModule subMod = new GitSubModule();
+				for (String line : decodedStr.split("\n")) {
+					// start of named submodule
+					if (line.trim().startsWith("[")) {
+						subMod = new GitSubModule();
+						subModules.add(subMod);
+					}
+					// capture properties as we see them
+					if (line.trim().startsWith("path")) {
+						subMod.path = line.split("=", 2)[1].trim();
+					}
+					if (line.trim().startsWith("url")) {
+						subMod.url = line.split("=", 2)[1].trim();
+					}
+					if (line.trim().startsWith("branch")) {
+						subMod.branch = line.split("=", 2)[1].trim();
+						if(".".equals(subMod.branch)){
+							// https://git-scm.com/docs/git-submodule#_options
+							// if branch value of "." is used, it should fallback to the
+							// source repos branch name
+							subMod.branch = ref;
+						}
+					}
+				}
+
+			}
 			// Found a Salesforce DX sfdx-project.json?
 			if(repo.getName().equals("sfdx-project.json")) 
 			{
@@ -620,33 +667,32 @@ public class GitHubSalesforceDeployController {
 				repositoryContainer.repositoryItems.clear();
 				// Download contents to temp dir
 				Path tempDir = Files.createTempDirectory(null);
-				ZipInputStream zipIS;
-				// Download 
-				zipIS = contentService.getArchiveAsZip(repoId, ref);
-				// Write to temp dir
-				byte[] buffer = new byte[2048];
-				ZipEntry entry;
-				while ((entry = zipIS.getNextEntry()) != null) {
-					// Remove the repo name folder from the path
-					String zipPath = entry.getName();
-					zipPath = zipPath.substring(zipPath.indexOf("/")+1);
-					// Skip dirs
-					if(entry.isDirectory()) {
-						continue;
+				downloadRepoToPath(tempDir, contentService, repoId, ref);
+				for (GitSubModule subMod : subModules) {
+					String urlVal = subMod.url;
+					// handling for the following module URL forms
+					// that might show up in the .gitmodules declaration
+					/*
+						https://github.com/owner/repo
+						https://github.com/owner/repo.gIt
+						git@github.com:owner/repo
+						git@github.com:owner/repo.git
+						../../owner/repo.git
+						../repo.git
+					 */
+					if(urlVal.toLowerCase().endsWith(".git")){
+						urlVal = urlVal.substring(0, urlVal.length() -4);
 					}
-					// Write file
-					Path filePath = tempDir.resolve(zipPath);						
-					File outputFile = filePath.toFile();
-					outputFile.getParentFile().mkdirs();
-					outputFile.createNewFile();
-					FileOutputStream fos = new FileOutputStream(outputFile);
-					BufferedOutputStream bos = new BufferedOutputStream(fos, buffer.length);
-					int len;
-					while ((len = zipIS.read(buffer)) > 0) {
-						bos.write(buffer, 0, len);
+					String[] parts = urlVal.split("/|:");
+					String ownerName = parts[parts.length-2];
+					if("..".equals(ownerName)){
+						// owner name is relative to the current package
+						ownerName = repoId.getOwner();
 					}
-					bos.close();
-				}					
+					String repoName = parts[parts.length-1];
+					RepositoryId subRepoId = RepositoryId.create(ownerName, repoName);
+					downloadRepoToPath(tempDir.resolve(subMod.path+"/"), contentService, subRepoId, subMod.branch);
+				}
 				// Convert to MD API Format using SFDX CLI
 				Process process = Runtime.getRuntime().exec("sfdx force:source:convert --outputdir deploy", null, tempDir.toFile());;
 				StringBuilder output = new StringBuilder();
@@ -771,6 +817,36 @@ public class GitHubSalesforceDeployController {
 						repositoryContainer.repositoryItems.add(repositoryItem);
 				}
 			}	
+		}
+	}
+
+	private static void downloadRepoToPath(Path tempDir, ContentsServiceEx contentService, RepositoryId repoId, String ref) throws Exception {
+		ZipInputStream zipIS;
+		// Download 
+		zipIS = contentService.getArchiveAsZip(repoId, ref);
+		// Write to temp dir
+		byte[] buffer = new byte[2048];
+		ZipEntry entry;
+		while ((entry = zipIS.getNextEntry()) != null) {
+			// Remove the repo name folder from the path
+			String zipPath = entry.getName();
+			zipPath = zipPath.substring(zipPath.indexOf("/")+1);
+			// Skip dirs
+			if(entry.isDirectory()) {
+				continue;
+			}
+			// Write file
+			Path filePath = tempDir.resolve(zipPath);
+			File outputFile = filePath.toFile();
+			outputFile.getParentFile().mkdirs();
+			outputFile.createNewFile();
+			FileOutputStream fos = new FileOutputStream(outputFile);
+			BufferedOutputStream bos = new BufferedOutputStream(fos, buffer.length);
+			int len;
+			while ((len = zipIS.read(buffer)) > 0) {
+				bos.write(buffer, 0, len);
+			}
+			bos.close();
 		}
 	}
 
