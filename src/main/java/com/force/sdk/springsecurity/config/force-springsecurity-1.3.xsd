@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2011, salesforce.com, inc.
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided
+    that the following conditions are met:
+
+       Redistributions of source code must retain the above copyright notice, this list of conditions and the
+       following disclaimer.
+
+       Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+       the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+       Neither the name of salesforce.com, inc. nor the names of its contributors may be used to endorse or
+       promote products derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+    WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+    PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+    ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+    TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+    HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.
+
+-->
+
+<xsd:schema xmlns="http://www.salesforce.com/schema/springsecurity"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    targetNamespace="http://www.salesforce.com/schema/springsecurity"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+
+    <xsd:import namespace="http://www.springframework.org/schema/beans"/>
+    <xsd:element name="oauthInfo">
+      <xsd:complexType>
+        <xsd:attribute name="endpoint" type="xsd:string" use="required"/>
+        <xsd:attribute name="oauth-key" type="xsd:string" use="required"/>
+        <xsd:attribute name="oauth-secret" type="xsd:string" use="required"/>
+      </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="connectionUrl">
+      <xsd:complexType>
+        <xsd:attribute name="url" type="xsd:string" use="required"/>
+      </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="connectionName">
+      <xsd:complexType>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+      </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="customUserDataRetriever">
+      <xsd:complexType>
+        <xsd:attribute name="ref" type="xsd:string" use="required"/>
+      </xsd:complexType>    	
+    </xsd:element>
+    <xsd:element name="oauth">
+      <xsd:complexType>
+        <xsd:complexContent>
+          <xsd:extension base="beans:identifiedType">
+          <xsd:sequence>
+            <xsd:choice minOccurs="1" maxOccurs="1">
+              <xsd:element ref="oauthInfo"/>
+              <xsd:element ref="connectionUrl"/>
+              <xsd:element ref="connectionName"/>
+            </xsd:choice>
+	        <xsd:element ref="customUserDataRetriever" minOccurs="0"/>
+          </xsd:sequence>
+          <xsd:attribute name="default-login-success" type="xsd:string"/>
+          <xsd:attribute name="default-logout-success" type="xsd:string"/>
+          <xsd:attribute name="login-url" type="xsd:string"/>
+          <xsd:attribute name="logout-url" type="xsd:string"/>
+          <xsd:attribute name="logout-from-force-dot-com" type="xsd:boolean"/>
+          <xsd:attribute name="store-data-in-session" type="xsd:boolean" default="false"/>
+          <xsd:attribute name="secure-key-file" type="xsd:string"/>
+          <xsd:attribute name="store-user-name" type="xsd:boolean" default="true"/>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

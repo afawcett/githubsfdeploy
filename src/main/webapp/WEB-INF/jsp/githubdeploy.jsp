@@ -146,7 +146,7 @@
 			contents: ${githubcontents},
 
 			// Async result from Salesforce Metadata API
-			asyncResult : null,
+			deployResult : null,
 
 			// Client timer Id used to poll Salesforce Metadata API
 			intervalId : null,
@@ -188,12 +188,12 @@
 		                contentType : "application/json; charset=utf-8",
 		                dataType : "json",
 		                success: function(data, textStatus, jqXHR) {
-		                    GitHubDeploy.asyncResult = data;
-		                    GitHubDeploy.renderAsync();
-		                    if(GitHubDeploy.asyncResult.state == 'Completed')
+		                    GitHubDeploy.deployResult = data;
+		                    GitHubDeploy.renderDeploy();
+		                    if(GitHubDeploy.deployResult.state == 'Completed')
 		                    	GitHubDeploy.checkDeploy();
 		                    else
-		                    	GitHubDeploy.intervalId = window.setInterval(GitHubDeploy.checkStatus, 2000);
+		                    	GitHubDeploy.intervalId = window.setInterval(GitHubDeploy.checkDeploy, 2000);
 		                },
 		                error: function(jqXHR, textStatus, errorThrown) {
 		                    alert('Failed ' + textStatus + errorThrown);
@@ -202,34 +202,12 @@
 				},
 
 			// Render Async
-			renderAsync: function() {
+			renderDeploy: function() {
 					$('#deploystatus').append(
 						'<div>Status: '+
-							GitHubDeploy.asyncResult.state + ' ' +
-							(GitHubDeploy.asyncResult.message != null ? GitHubDeploy.asyncResult.message : '') +
+							GitHubDeploy.deployResult.state + ' ' +
+							(GitHubDeploy.deployResult.message != null ? GitHubDeploy.deployResult.message : '') +
 						'</div>');
-				},
-
-			// Check Status
-			checkStatus: function() {
-		            $.ajax({
-		                type: 'GET',
-		                url: window.pathname + '/checkstatus/' + GitHubDeploy.asyncResult.id,
-		                contentType : 'application/json; charset=utf-8',
-		                dataType : 'json',
-		                success: function(data, textStatus, jqXHR) {
-		                    GitHubDeploy.asyncResult = data;
-		                    GitHubDeploy.renderAsync();
-		                    if(GitHubDeploy.asyncResult.state == 'Completed')
-		                    {
-		                    	window.clearInterval(GitHubDeploy.intervalId);
-		                    	GitHubDeploy.checkDeploy();
-		                    }
-		                },
-		                error: function(jqXHR, textStatus, errorThrown) {
-		                	$('#deploystatus').append('<div>Error: ' + textStatus + errorThrown + '</div>');
-		                }
-		            });
 				},
 
 			// Check Deploy
@@ -238,7 +216,7 @@
 					$('#deploy').attr('disabled', null);
 		            $.ajax({
 		                type: 'GET',
-		                url: window.pathname + '/checkdeploy/' + GitHubDeploy.asyncResult.id,
+		                url: window.pathname + '/checkdeploy/' + GitHubDeploy.deployResult.id,
 		                contentType : 'application/json; charset=utf-8',
 		                dataType : 'json',
 		                success: function(data, textStatus, jqXHR) {

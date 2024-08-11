@@ -56,6 +56,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.namespace.QName;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.force.sdk.connector.ForceServiceConnector;
 import com.force.sdk.oauth.exception.ForceOAuthSessionExpirationException;
 import com.sforce.soap.metadata.AsyncResult;
@@ -73,8 +75,6 @@ import com.sforce.soap.metadata.RunTestsResult;
 import com.sforce.ws.bind.TypeMapper;
 import com.sforce.ws.parser.XmlOutputStream;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.eclipse.egit.github.core.IRepositoryIdProvider;
 import org.eclipse.egit.github.core.RepositoryContents;
 import org.eclipse.egit.github.core.RepositoryId;
@@ -452,20 +452,7 @@ public class GitHubSalesforceDeployController {
 
 		// Given the client the AysncResult to poll for the result of the deploy
 		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.getSerializationConfig().addMixInAnnotations(AsyncResult.class, AsyncResultMixIn.class);
-		return objectMapper.writeValueAsString(asyncResult);
-	}
-	
-	@ResponseBody
-	@RequestMapping(method = RequestMethod.GET, value = "/{owner}/{repo}/checkstatus/{asyncId}")
-	public String checkStatus(@PathVariable("asyncId") String asyncId) throws Exception
-	{
-		// Connect to Metadata API, check async status and return to client
-		ForceServiceConnector connector = new ForceServiceConnector(ForceServiceConnector.getThreadLocalConnectorConfig());
-		MetadataConnection metadataConnection = connector.getMetadataConnection();
-		AsyncResult asyncResult =  metadataConnection.checkStatus(new String[] { asyncId })[0];
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.getSerializationConfig().addMixInAnnotations(AsyncResult.class, AsyncResultMixIn.class);
+		objectMapper.addMixIn(AsyncResult.class, AsyncResultMixIn.class);
 		return objectMapper.writeValueAsString(asyncResult);
 	}
 	
@@ -476,7 +463,7 @@ public class GitHubSalesforceDeployController {
 		// Connect to Metadata API, check async status and return to client
 		ForceServiceConnector connector = new ForceServiceConnector(ForceServiceConnector.getThreadLocalConnectorConfig());
 		MetadataConnection metadataConnection = connector.getMetadataConnection();
-		DeployResult deployResult = metadataConnection.checkDeployStatus(asyncId);
+		DeployResult deployResult = metadataConnection.checkDeployStatus(asyncId, true);
 		ObjectMapper objectMapper = new ObjectMapper();
 		return objectMapper.writeValueAsString(printErrors(deployResult));
 	}
@@ -904,7 +891,7 @@ public class GitHubSalesforceDeployController {
 	 */
 	private static String printErrors(DeployResult result)
 	{
-		DeployMessage messages[] = result.getMessages();
+		DeployMessage messages[] = result.getDetails().getComponentFailures();
 		StringBuilder buf = new StringBuilder();
 		for (DeployMessage message : messages) {
 			if (!message.isSuccess()) {
@@ -921,7 +908,7 @@ public class GitHubSalesforceDeployController {
 						message.getProblem()).append('\n');
 			}
 		}
-		RunTestsResult rtr = result.getRunTestResult();
+		RunTestsResult rtr = result.getDetails().getRunTestResult();
 		if (rtr.getFailures() != null) {
 			for (RunTestFailure failure : rtr.getFailures()) {
 				String n = (failure.getNamespace() == null ? "" :
