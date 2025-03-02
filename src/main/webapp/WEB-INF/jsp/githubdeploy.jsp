@@ -113,7 +113,7 @@
 						</dt>
 						<dd class="slds-dl--horizontal__detail slds-tile__meta">
 							<p class="slds-truncate">
-								<c:out value="${userContext.getOrganizationName()}" />
+								<c:out value="${organizationName}" />
 							</p>
 						</dd>
 						<dt class="slds-dl--horizontal__label">
@@ -121,7 +121,7 @@
 						</dt>
 						<dd class="slds-dl--horizontal__detail slds-tile__meta">
 							<p class="slds-truncate">
-								<c:out value="${userContext.getUserName()}" />
+								<c:out value="${userName}" />
 							</p>
 						</dd>
 					</dl>
@@ -175,6 +175,28 @@
 					}
 				},
 
+			// Check Status
+			checkStatus: function() {
+				$.ajax({
+					type: 'GET',
+					url: window.pathname + '/checkstatus/' + GitHubDeploy.deployResult.id,
+					contentType : 'application/json; charset=utf-8',
+					dataType : 'json',
+					success: function(data, textStatus, jqXHR) {
+						GitHubDeploy.deployResult = data;
+						GitHubDeploy.renderDeploy();
+						if(GitHubDeploy.deployResult.completedDate)
+						{
+							window.clearInterval(GitHubDeploy.intervalId);
+							GitHubDeploy.checkDeploy();
+						}
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						$('#deploystatus').append('<div>Error: ' + textStatus + errorThrown + '</div>');
+					}
+				});
+			},
+
 			// Deploy
 			deploy: function() {
 					$('#deploy').attr('disabled', 'disabled');
@@ -189,11 +211,15 @@
 		                dataType : "json",
 		                success: function(data, textStatus, jqXHR) {
 		                    GitHubDeploy.deployResult = data;
-		                    GitHubDeploy.renderDeploy();
-		                    if(GitHubDeploy.deployResult.state == 'Completed')
+							$('#deploystatus').append(
+								'<div>Status: '+
+									GitHubDeploy.deployResult.state + ' ' +
+									(GitHubDeploy.deployResult.message != null ? GitHubDeploy.deployResult.message : '') +
+								'</div>');		
+		                    if(GitHubDeploy.deployResult.completedDate)
 		                    	GitHubDeploy.checkDeploy();
 		                    else
-		                    	GitHubDeploy.intervalId = window.setInterval(GitHubDeploy.checkDeploy, 2000);
+		                    	GitHubDeploy.intervalId = window.setInterval(GitHubDeploy.checkStatus, 2000);
 		                },
 		                error: function(jqXHR, textStatus, errorThrown) {
 		                    alert('Failed ' + textStatus + errorThrown);
@@ -205,10 +231,11 @@
 			renderDeploy: function() {
 					$('#deploystatus').append(
 						'<div>Status: '+
-							GitHubDeploy.deployResult.state + ' ' +
+							GitHubDeploy.deployResult.status + ' ' +
 							(GitHubDeploy.deployResult.message != null ? GitHubDeploy.deployResult.message : '') +
 						'</div>');
 				},
+
 
 			// Check Deploy
 			checkDeploy: function() {

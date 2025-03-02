@@ -8,11 +8,15 @@ Read more about this tool at my blog post [here](http://andyinthecloud.com/2013/
 
 * Use Maven to build the war package: `mvn package`
 
-* Run the package locally: `java -jar target/dependency/webapp-runner.jar target/githubsfdeploy-0.0.2-SNAPSHOT.war --port 5000` then open a browser to http://localhost:8080
+* Run the package locally: `mvn spring-boot:run`
 
-* Test with http://localhost:5000/app/githubdeploy/apex-enterprise-patterns/fflib-apex-mocks 
+* Success Test with http://localhost:5000/app/githubdeploy/apex-enterprise-patterns/fflib-apex-mocks 
+* Failure Test with http://localhost:5000/app/githubdeploy/afawcett/custommetadataapi-demo
+* Private Repo http://localhost:5000/app/githubdeploy/afawcett/github-sfdeploy-test  
 
 ## Changelog
+
+**Update: April 2025:** Major upgrade to latest Spring Boot and Salesforce API
 
 **Update: 8 February 2024:** Added support for git submodules as part of SFDX formatted repositories.
 

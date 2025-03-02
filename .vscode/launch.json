@@ -2,19 +2,5 @@
     // Use IntelliSense to learn about possible attributes.
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "java",
-            "name": "Debug (Launch) - Current File",
-            "request": "launch",            
-            "mainClass": "com.myapp",
-            "vmArgs": "-jar target/dependency/webapp-runner.jar target/githubsfdeploy-0.0.2-SNAPSHOT.war --port 5000",
-            "env": {
-                "SFDC_OAUTH_CLIENT_SECRET" : "58B9A9EF2FBDD8CDE83FF437A5535546907F1D74ADE518B7BA02C2C36673B46A",
-                "SFDC_OAUTH_CLIENT_ID" : "3MVG9KsVczVNcM8xxF6XR9HgMWtHCU2EoG0bBkzzqJBJZdd05kIjYC7BB_J7FwlZ0o38_LGzDWzVMhcWoJyv5",
-                "SFDC_END_POINT" : "https://login.salesforce.com"
-            }             
-        }
-    ]
+    "version": "0.2.0"
 }
