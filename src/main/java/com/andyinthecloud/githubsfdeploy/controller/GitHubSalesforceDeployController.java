@@ -112,6 +112,7 @@ public class GitHubSalesforceDeployController {
 
 	private static final Logger logger = LoggerFactory.getLogger(GitHubSalesforceDeployController.class);
 	private static final String GITHUB_TOKEN = "github_token";
+	private static final String GITHUB_AUTH_ATTEMPTED = "github_auth_attempted";
 
 	@Autowired
 	private GitHubProperties githubProperties;
@@ -126,13 +127,18 @@ public class GitHubSalesforceDeployController {
 	@GetMapping("/app/githubdeploy/authorizegh")
 	public String authorize(@RequestParam final  String code, @RequestParam final  String state, HttpSession session) throws Exception
 	{
+		logger.debug("Received GitHub OAuth callback - Code: {}, State: {}", code, state);
+		// Clear the auth attempted flag when we get a new token
+		session.removeAttribute(GITHUB_AUTH_ATTEMPTED);
 		URI uri = new URI("https", "github.com", "/login/oauth/access_token", null);
 		URL url = uri.toURL();
 		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 		connection.setRequestMethod("POST");
 		connection.setRequestProperty("Accept", "application/json");
+		connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 		String urlParameters = "client_id=" + githubProperties.getId() + "&client_secret=" + githubProperties.getSecret()
 					 +"&code=" + code;
+		logger.debug("Exchanging code for token with parameters: client_id={}, code={}", githubProperties.getId(), code);
 		// Send post request
 		connection.setDoOutput(true);
 		try (DataOutputStream connectionOutputStream = new DataOutputStream(connection.getOutputStream())) {
@@ -141,18 +147,43 @@ public class GitHubSalesforceDeployController {
 		}
 
 		// Read response
-		try (BufferedReader inputReader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+		int responseCode = connection.getResponseCode();
+		logger.debug("GitHub token exchange response code: {}", responseCode);
+		
+		StringBuilder gitHubResponse = new StringBuilder();
+		try (BufferedReader inputReader = new BufferedReader(
+				new InputStreamReader(responseCode >= 400 ? connection.getErrorStream() : connection.getInputStream()))) {
 			String inputLine;
-			StringBuilder gitHubResponse = new StringBuilder();
 			while ((inputLine = inputReader.readLine()) != null) {
 				gitHubResponse.append(inputLine);
 			}
-			ObjectMapper mapper = new ObjectMapper();
-			TokenResult tokenResult = (TokenResult) mapper.readValue(gitHubResponse.toString(), TokenResult.class);
-			session.setAttribute(GITHUB_TOKEN, tokenResult.access_token);
-			String redirectUrl = state;
-			return "redirect:" + redirectUrl;
 		}
+		
+		String responseBody = gitHubResponse.toString();
+		logger.debug("Received response from GitHub token exchange: {}", responseBody);
+		
+		if (responseCode >= 400) {
+			logger.error("GitHub token exchange failed with status code: {}", responseCode);
+			throw new RuntimeException("GitHub token exchange failed with status code: " + responseCode);
+		}
+		
+		ObjectMapper mapper = new ObjectMapper();
+		TokenResult tokenResult = mapper.readValue(responseBody, TokenResult.class);
+		if (tokenResult.error != null) {
+			logger.error("GitHub token exchange failed - Error: {}, Description: {}", tokenResult.error, tokenResult.error_description);
+			throw new RuntimeException("GitHub token exchange failed: " + tokenResult.error_description);
+		}
+		
+		if (tokenResult.access_token == null || tokenResult.access_token.isEmpty()) {
+			logger.error("GitHub token exchange returned null or empty access token");
+			throw new RuntimeException("GitHub token exchange returned null or empty access token");
+		}
+		
+		session.setAttribute(GITHUB_TOKEN, tokenResult.access_token);
+		logger.debug("Successfully stored GitHub token in session");
+		String redirectUrl = state;
+		logger.debug("Redirecting to: {}", redirectUrl);
+		return "redirect:" + redirectUrl;
 	}
 	
 	@GetMapping("/app/githubdeploy/{owner}/{repo}")
@@ -174,7 +205,9 @@ public class GitHubSalesforceDeployController {
 			map.put("repo", null);
 			map.put("githubcontents", null);
 			String accessToken = (String)session.getAttribute(GITHUB_TOKEN);
+			Boolean authAttempted = (Boolean)session.getAttribute(GITHUB_AUTH_ATTEMPTED);
 			logger.debug("GitHub Token in session: {}", accessToken != null ? "Present" : "Null");
+			logger.debug("GitHub Auth Attempted: {}", authAttempted != null && authAttempted ? "Yes" : "No");
 			// Repository name
 			RepositoryId repoId = RepositoryId.create(repoOwner, repoName);
 			map.put("repositoryName", repoId.generateId());
@@ -220,10 +253,12 @@ public class GitHubSalesforceDeployController {
 			GitHubClient client;
 			if(accessToken == null)
 			{
+				logger.debug("Creating GitHub client with OAuth server credentials - Client ID: {}", githubProperties.getId());
 				client = new GitHubClientOAuthServer(githubProperties.getId(), githubProperties.getSecret());
 			}
 			else
 			{
+				logger.debug("Creating GitHub client with user access token");
 				client = new GitHubClient();
 				client.setOAuth2Token(accessToken);
 				map.put("githuburl","https://github.com/settings/connections/applications/" + githubProperties.getId());
@@ -237,14 +272,33 @@ public class GitHubSalesforceDeployController {
 			catch(RequestException e)
 			{
 				String clientId = githubProperties.getId();
-				if(accessToken == null & !clientId.isEmpty()) {
+				logger.debug("GitHub request failed - Status: {}, Client ID present: {}, Auth attempted: {}", 
+					e.getStatus(), 
+					!clientId.isEmpty(), 
+					authAttempted != null && authAttempted);
+					
+				if(accessToken == null && !clientId.isEmpty() && (e.getStatus() == 401 || e.getStatus() == 403 || e.getStatus() == 404) && (authAttempted == null || !authAttempted)) {
+					session.setAttribute(GITHUB_AUTH_ATTEMPTED, true);
 					StringBuffer requestURL = request.getRequestURL();
-				    String queryString = request.getQueryString();
-				    String redirectUrl = queryString == null ? requestURL.toString() : requestURL.append('?').append(queryString).toString();
-					return "redirect:" + "https://github.com/login/oauth/authorize?client_id=" + githubProperties.getId() + "&scope=repo&state=" + redirectUrl;					
+					String queryString = request.getQueryString();
+					String redirectUrl = queryString == null ? requestURL.toString() : requestURL.append('?').append(queryString).toString();
+					String oauthUrl = "https://github.com/login/oauth/authorize?client_id=" + githubProperties.getId() + "&scope=repo&state=" + redirectUrl;
+					logger.debug("Redirecting to GitHub OAuth URL: {}", oauthUrl);
+					logger.debug("Request URL: {}", requestURL);
+					logger.debug("Query String: {}", queryString);
+					logger.debug("Redirect URL: {}", redirectUrl);
+					return "redirect:" + oauthUrl;					
 				}
 				else {
-					map.put("error", "Failed to retrive GitHub repository details : " + e.getMessage());					
+					if (e.getStatus() == 404) {
+						map.put("error", "Could not find the repository '" + repoName + "'. Ensure it is spelt correctly and that it is owned by '" + repoOwner + "'");
+					} else {
+						map.put("error", "Failed to retrieve GitHub repository details: " + e.getMessage() + " (Status: " + e.getStatus() + ")");
+						if (e.getStatus() == 401 || e.getStatus() == 403) {
+							session.removeAttribute(GITHUB_TOKEN);
+							session.removeAttribute(GITHUB_AUTH_ATTEMPTED);
+						}
+					}
 				}
 			}
 			catch(IOException e)
