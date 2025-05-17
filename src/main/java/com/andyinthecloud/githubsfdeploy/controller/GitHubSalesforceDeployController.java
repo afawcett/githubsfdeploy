@@ -472,6 +472,8 @@ public class GitHubSalesforceDeployController {
 					xmlOutputStream.setPrefix("", "http://soap.sforce.com/2006/04/metadata");
 					xmlOutputStream.setPrefix("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 					packageManifest.write(packageQName, xmlOutputStream, typeMapper);
+					xmlOutputStream.close();
+					packageBaos.close();
 					packageManifestXml = new String(packageBaos.toByteArray());
 				}
 			}
@@ -480,83 +482,112 @@ public class GitHubSalesforceDeployController {
 			RepositoryId repoId = RepositoryId.create(repoOwner, repoName);
 			ContentsServiceEx contentService = new ContentsServiceEx(client);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			try (ZipOutputStream zipOS = new ZipOutputStream(baos);
-				 ZipInputStream zipIS = contentService.getArchiveAsZip(repoId, repositoryContainer.ref)) {
-				// Dynamically generated package manifest?
+			try (ZipOutputStream zipOS = new ZipOutputStream(baos)) {
+				logger.info("Starting zip file creation for classic repo deployment");
+				// Add package.xml first at root level
+				String normalizedPath = null;
 				if(packageManifestXml!=null) {
+					// Use dynamically generated package manifest
 					zipOS.putNextEntry(new ZipEntry("package.xml"));
 					zipOS.write(packageManifestXml.getBytes());
 					zipOS.closeEntry();
+					logger.info("Added dynamically generated package.xml to zip file ({} bytes)", packageManifestXml.getBytes().length);
+				} else if(repoPackagePath!=null) {
+					// Normalize the path to avoid double slashes
+					normalizedPath = repoPackagePath.replaceAll("//+", "/");
+					if(normalizedPath.endsWith("/")) {
+						normalizedPath = normalizedPath.substring(0, normalizedPath.length() - 1);
+					}
+					logger.info("Looking for existing package.xml in repo at path: {}", normalizedPath);
 				}
+
 				// Read the zip entries, output to the metadata deploy zip files selected
-				ZipEntry zipEntry;
-				while ((zipEntry = zipIS.getNextEntry()) != null) {
-					// Determine the repository relative path (zip file contains an archive folder in root)
-					String zipPath = zipEntry.getName();
-					zipPath = zipPath.substring(zipPath.indexOf("/")+1);
-					// Skip dirs
-					if(zipEntry.isDirectory()) {
-						continue;
-					}
-					// Found a repository file to deploy?
-					if(filesToDeploy.containsKey(zipPath))
-					{
-						// Create metadata file (in correct folder for its type)
-						RepositoryItem repoItem = filesToDeploy.get(zipPath);
-						String zipName = repoItem.metadataFolder+"/";
-						if(repoItem.metadataInFolder)
-						{
-							String[] folders = repoItem.repositoryItem.getPath().split("/");
-							String folderName = folders[folders.length-2];
-							zipName+= folderName + "/";
+				try (ZipInputStream zipIS = contentService.getArchiveAsZip(repoId, repositoryContainer.ref)) {
+					ZipEntry zipEntry;
+					int totalFiles = 0;
+					boolean foundPackageXml = false;
+					while ((zipEntry = zipIS.getNextEntry()) != null) {
+						// Determine the repository relative path (zip file contains an archive folder in root)
+						String zipPath = zipEntry.getName();
+						zipPath = zipPath.substring(zipPath.indexOf("/")+1);
+						// Skip dirs
+						if(zipEntry.isDirectory()) {
+							continue;
 						}
-						zipName+= repoItem.repositoryItem.getName();
-						ZipEntry metadataZipEntry = new ZipEntry(zipName);
-						zipOS.putNextEntry(metadataZipEntry);
-						// Copy bytes over from Github archive input stream to Metadata zip output stream
-						byte[] buffer = new byte[1024];
-						int length;
-						while((length = zipIS.read(buffer)) > 0)
-							zipOS.write(buffer, 0, length);
-						zipOS.closeEntry();
-						// Missing metadata file for Apex classes?
-						if(repoItem.metadataType.equals("ApexClass") && !filesToDeploy.containsKey(zipPath+"-meta.xml"))
-						{
-							StringBuilder sb = new StringBuilder();
-							sb.append("<ApexClass xmlns=\"http://soap.sforce.com/2006/04/metadata\">")
-							  .append("<apiVersion>61.0</apiVersion>")
-							  .append("<status>Active</status>")
-							  .append("</ApexClass>");
-							ZipEntry missingMetadataZipEntry = new ZipEntry(repoItem.metadataFolder+"/"+repoItem.repositoryItem.getName()+"-meta.xml");
-							zipOS.putNextEntry(missingMetadataZipEntry);
-							zipOS.write(sb.toString().getBytes());
+						
+						// Handle package.xml if needed
+						if(!foundPackageXml && repoPackagePath != null && zipPath.equals(normalizedPath + "/package.xml")) {
+							zipOS.putNextEntry(new ZipEntry("package.xml"));
+							byte[] buffer = new byte[1024];
+							int length;
+							int totalBytes = 0;
+							while((length = zipIS.read(buffer)) > 0) {
+								zipOS.write(buffer, 0, length);
+								totalBytes += length;
+							}
 							zipOS.closeEntry();
+							logger.info("Added existing package.xml to zip file ({} bytes)", totalBytes);
+							foundPackageXml = true;
+							continue;
 						}
-					}
-					// Found a package directory to deploy?
-					else if(repoPackagePath!=null && zipPath.equals(repoPackagePath))
-					{
-						while(true)
+						
+						// Skip package.xml if we've already handled it
+						if(zipPath.equals("package.xml")) {
+							continue;
+						}
+						
+						// Found a repository file to deploy?
+						if(filesToDeploy.containsKey(zipPath))
 						{
-							// More package files to zip or dropped out of the package folder?
-							zipEntry = zipIS.getNextEntry();
-							if(zipEntry==null || !zipEntry.getName().startsWith(zipPath))
-								break;
-							// Generate the Metadata zip entry name
-							String metadataZipEntryName = zipEntry.getName().substring(zipPath.length());
-							ZipEntry metadataZipEntry = new ZipEntry(metadataZipEntryName);
+							// Create metadata file (in correct folder for its type)
+							RepositoryItem repoItem = filesToDeploy.get(zipPath);
+							String zipName = repoItem.metadataFolder+"/";
+							if(repoItem.metadataInFolder)
+							{
+								String[] folders = repoItem.repositoryItem.getPath().split("/");
+								String folderName = folders[folders.length-2];
+								zipName+= folderName + "/";
+							}
+							zipName+= repoItem.repositoryItem.getName();
+							logger.debug("Adding metadata file to zip: {}", zipName);
+							ZipEntry metadataZipEntry = new ZipEntry(zipName);
 							zipOS.putNextEntry(metadataZipEntry);
 							// Copy bytes over from Github archive input stream to Metadata zip output stream
 							byte[] buffer = new byte[1024];
 							int length;
-							while((length = zipIS.read(buffer)) > 0)
+							int totalBytes = 0;
+							while((length = zipIS.read(buffer)) > 0) {
 								zipOS.write(buffer, 0, length);
+								totalBytes += length;
+							}
 							zipOS.closeEntry();
+							logger.debug("Added file {} to zip ({} bytes)", zipName, totalBytes);
+							
+							// Generate meta.xml for ApexClass if needed
+							if(repoItem.metadataType.equals("ApexClass") && !filesToDeploy.containsKey(zipPath+"-meta.xml")) {
+								String metaXmlName = zipName + "-meta.xml";
+								logger.debug("Generating meta.xml for ApexClass: {}", metaXmlName);
+								ZipEntry metaXmlEntry = new ZipEntry(metaXmlName);
+								zipOS.putNextEntry(metaXmlEntry);
+								String metaXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+									"<ApexClass xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n" +
+									"    <apiVersion>61.0</apiVersion>\n" +
+									"    <status>Active</status>\n" +
+									"</ApexClass>";
+								zipOS.write(metaXml.getBytes());
+								zipOS.closeEntry();
+								logger.debug("Added meta.xml file {} to zip ({} bytes)", metaXmlName, metaXml.getBytes().length);
+							}
+							totalFiles++;
 						}
-						break;
 					}
+					if (!foundPackageXml && repoPackagePath != null) {
+						logger.error("Could not find package.xml at path: {}", normalizedPath + "/package.xml");
+					}
+					logger.info("Added {} metadata files to zip", totalFiles);
 				}
 				mdDeployZipBytes = baos.toByteArray();
+				logger.info("Created zip file with total size: {} bytes", mdDeployZipBytes.length);
 			}
 		}
 

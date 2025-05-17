@@ -4,6 +4,7 @@
 /.settings
 /tomcat.*
 /.idea
+/.cursor
 /*.iml
 .env
 /.DS_Store
