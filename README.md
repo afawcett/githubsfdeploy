@@ -8,9 +8,11 @@ Read more about this tool at my blog post [here](http://andyinthecloud.com/2013/
 
 * Use Maven to build the war package: `mvn package`
 
-* Run the package locally: `java -jar target/dependency/webapp-runner.jar target/githubsfdeploy-0.0.2-SNAPSHOT.war` then open a browser to http://localhost:8080
+* Run the package locally: `mvn spring-boot:run`
 
 ## Changelog
+
+**Update: May 2025:** Major upgrade to latest Spring Boot and Salesforce API
 
 **Update: 8 February 2024:** Added support for git submodules as part of SFDX formatted repositories.
 
@@ -27,3 +29,11 @@ Read more about this tool at my blog post [here](http://andyinthecloud.com/2013/
 **Updated: 7th December 2013:** Added Sandbox support see [here](http://andyinthecloud.com/2013/12/07/updated-github-deploy-tool-sandbox-support/)
 
 ![Logo](http://andrewfawcett.files.wordpress.com/2013/09/githubsfdeploy.png)
+
+## Testing
+
+* Success Test with http://localhost:5000/app/githubdeploy/apex-enterprise-patterns/fflib-apex-mocks 
+* Failure Test with http://localhost:5000/app/githubdeploy/afawcett/custommetadataapi-demo
+* Private Repo Test with http://localhost:5000/app/githubdeploy/afawcett/github-sfdeploy-test 
+* No package.xml Repo Test with http://localhost:5000/app/githubdeploy/SalesforceSFDC/Apex-Classes 
+* Success Repo Test with  http://localhost:5000/app/githubdeploy/benedwards44/Apex-for-Xero 

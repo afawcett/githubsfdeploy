@@ -113,7 +113,7 @@
 						</dt>
 						<dd class="slds-dl--horizontal__detail slds-tile__meta">
 							<p class="slds-truncate">
-								<c:out value="${userContext.getOrganizationName()}" />
+								<c:out value="${organizationName}" />
 							</p>
 						</dd>
 						<dt class="slds-dl--horizontal__label">
@@ -121,7 +121,7 @@
 						</dt>
 						<dd class="slds-dl--horizontal__detail slds-tile__meta">
 							<p class="slds-truncate">
-								<c:out value="${userContext.getUserName()}" />
+								<c:out value="${userName}" />
 							</p>
 						</dd>
 					</dl>
@@ -146,7 +146,7 @@
 			contents: ${githubcontents},
 
 			// Async result from Salesforce Metadata API
-			asyncResult : null,
+			deployResult : null,
 
 			// Client timer Id used to poll Salesforce Metadata API
 			intervalId : null,
@@ -175,6 +175,28 @@
 					}
 				},
 
+			// Check Status
+			checkStatus: function() {
+				$.ajax({
+					type: 'GET',
+					url: window.pathname + '/checkstatus/' + GitHubDeploy.deployResult.id,
+					contentType : 'application/json; charset=utf-8',
+					dataType : 'json',
+					success: function(data, textStatus, jqXHR) {
+						GitHubDeploy.deployResult = data;
+						GitHubDeploy.renderDeploy();
+						if(GitHubDeploy.deployResult.completedDate)
+						{
+							window.clearInterval(GitHubDeploy.intervalId);
+							GitHubDeploy.checkDeploy();
+						}
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						$('#deploystatus').append('<div>Error: ' + textStatus + errorThrown + '</div>');
+					}
+				});
+			},
+
 			// Deploy
 			deploy: function() {
 					$('#deploy').attr('disabled', 'disabled');
@@ -188,9 +210,13 @@
 		                contentType : "application/json; charset=utf-8",
 		                dataType : "json",
 		                success: function(data, textStatus, jqXHR) {
-		                    GitHubDeploy.asyncResult = data;
-		                    GitHubDeploy.renderAsync();
-		                    if(GitHubDeploy.asyncResult.state == 'Completed')
+		                    GitHubDeploy.deployResult = data;
+							$('#deploystatus').append(
+								'<div>Status: '+
+									GitHubDeploy.deployResult.state + ' ' +
+									(GitHubDeploy.deployResult.message != null ? GitHubDeploy.deployResult.message : '') +
+								'</div>');		
+		                    if(GitHubDeploy.deployResult.completedDate)
 		                    	GitHubDeploy.checkDeploy();
 		                    else
 		                    	GitHubDeploy.intervalId = window.setInterval(GitHubDeploy.checkStatus, 2000);
@@ -202,35 +228,14 @@
 				},
 
 			// Render Async
-			renderAsync: function() {
+			renderDeploy: function() {
 					$('#deploystatus').append(
 						'<div>Status: '+
-							GitHubDeploy.asyncResult.state + ' ' +
-							(GitHubDeploy.asyncResult.message != null ? GitHubDeploy.asyncResult.message : '') +
+							GitHubDeploy.deployResult.status + ' ' +
+							(GitHubDeploy.deployResult.message != null ? GitHubDeploy.deployResult.message : '') +
 						'</div>');
 				},
 
-			// Check Status
-			checkStatus: function() {
-		            $.ajax({
-		                type: 'GET',
-		                url: window.pathname + '/checkstatus/' + GitHubDeploy.asyncResult.id,
-		                contentType : 'application/json; charset=utf-8',
-		                dataType : 'json',
-		                success: function(data, textStatus, jqXHR) {
-		                    GitHubDeploy.asyncResult = data;
-		                    GitHubDeploy.renderAsync();
-		                    if(GitHubDeploy.asyncResult.state == 'Completed')
-		                    {
-		                    	window.clearInterval(GitHubDeploy.intervalId);
-		                    	GitHubDeploy.checkDeploy();
-		                    }
-		                },
-		                error: function(jqXHR, textStatus, errorThrown) {
-		                	$('#deploystatus').append('<div>Error: ' + textStatus + errorThrown + '</div>');
-		                }
-		            });
-				},
 
 			// Check Deploy
 			checkDeploy: function() {
@@ -238,7 +243,7 @@
 					$('#deploy').attr('disabled', null);
 		            $.ajax({
 		                type: 'GET',
-		                url: window.pathname + '/checkdeploy/' + GitHubDeploy.asyncResult.id,
+		                url: window.pathname + '/checkdeploy/' + GitHubDeploy.deployResult.id,
 		                contentType : 'application/json; charset=utf-8',
 		                dataType : 'json',
 		                success: function(data, textStatus, jqXHR) {

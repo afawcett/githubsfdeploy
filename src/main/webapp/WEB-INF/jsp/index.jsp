@@ -9,16 +9,18 @@
 
 <script>
 var appName = ''
-function githubdeploy()
-{
+function loginToSalesforce() {
     var ref = $('#ref').val();    
-	var sfdeployurl =
-		$('#production').attr('checked') ?
-			'https://githubsfdeploy.herokuapp.com/app/githubdeploy' :
-			'https://githubsfdeploy-sandbox.herokuapp.com/app/githubdeploy';
-	sfdeployurl+= '/' + $('#owner').val() + '/' + $('#repo').val() + (ref != '' ? '?ref=' + ref : '');
-	window.location = sfdeployurl;
+    var sfdeployurl = window.location.origin + '/app/githubdeploy';
+    sfdeployurl+= '/' + $('#owner').val() + '/' + $('#repo').val() + (ref != '' ? '?ref=' + ref : '');
+    window.location = sfdeployurl;
+    return false;
 }
+
+function githubdeploy() {
+    return loginToSalesforce();
+}
+
 function togglebuttoncode()
 {
 	updatebuttonhtml();
@@ -82,7 +84,7 @@ function load()
 </script>
 
 <body style="margin:10px" onload="load();">
-<form onsubmit="loginToSalesforce();return false;">
+<form onsubmit="return loginToSalesforce();">
 
 <div class="slds-page-header" role="banner">
 	<div class="slds-grid">
@@ -101,7 +103,7 @@ function load()
 		</div>
 	   	<div class="slds-col slds-no-flex slds-align-bottom">
 	      <div class="slds-button-group" role="group">
-	      	<input type="submit" id="login" value="Login to Salesforce" class="slds-button slds-button--neutral" onclick="githubdeploy();return false;"/>
+	      	<input type="submit" id="login" value="Login to Salesforce" class="slds-button slds-button--neutral"/>
 	      </div>
 	    </div>				
 	</div>
