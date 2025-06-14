@@ -11,7 +11,10 @@
 var appName = ''
 function loginToSalesforce() {
     var ref = $('#ref').val();    
-    var sfdeployurl = window.location.origin + '/app/githubdeploy';
+    var sfdeployurl =
+        $('#production').is(':checked') ?
+            'https://githubsfdeploy.herokuapp.com/app/githubdeploy' :
+            'https://githubsfdeploy-sandbox.herokuapp.com/app/githubdeploy';
     sfdeployurl+= '/' + $('#owner').val() + '/' + $('#repo').val() + (ref != '' ? '?ref=' + ref : '');
     window.location = sfdeployurl;
     return false;
