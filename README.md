@@ -36,4 +36,5 @@ Read more about this tool at my blog post [here](http://andyinthecloud.com/2013/
 * Failure Test with http://localhost:5000/app/githubdeploy/afawcett/custommetadataapi-demo
 * Private Repo Test with http://localhost:5000/app/githubdeploy/afawcett/github-sfdeploy-test 
 * No package.xml Repo Test with http://localhost:5000/app/githubdeploy/SalesforceSFDC/Apex-Classes 
-* Success Repo Test with  http://localhost:5000/app/githubdeploy/benedwards44/Apex-for-Xero 
+* Success Repo Test with http://localhost:5000/app/githubdeploy/benedwards44/Apex-for-Xero 
+* Success Repo Test with http://localhost:5000/app/githubdeploy/thedges/PS2MapComponents?ref=main 

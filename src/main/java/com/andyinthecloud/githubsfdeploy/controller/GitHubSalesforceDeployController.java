@@ -510,10 +510,6 @@ public class GitHubSalesforceDeployController {
 						// Determine the repository relative path (zip file contains an archive folder in root)
 						String zipPath = zipEntry.getName();
 						zipPath = zipPath.substring(zipPath.indexOf("/")+1);
-						// Skip dirs
-						if(zipEntry.isDirectory()) {
-							continue;
-						}
 						
 						// Handle package.xml if needed
 						if(!foundPackageXml && repoPackagePath != null && zipPath.equals(normalizedPath + "/package.xml")) {
@@ -580,6 +576,33 @@ public class GitHubSalesforceDeployController {
 							}
 							totalFiles++;
 						}
+						// Found a package directory to deploy?
+						else if(repoPackagePath!=null && zipPath.equals(repoPackagePath))
+						{
+							while(true)
+							{
+								// More package files to zip or dropped out of the package folder?
+								zipEntry = zipIS.getNextEntry();
+								if(zipEntry==null)
+									break;
+								zipPath = zipEntry.getName();
+								zipPath = zipPath.substring(zipPath.indexOf("/")+1);
+								logger.info("zipPath: {}", zipPath);
+								if(!zipPath.startsWith(repoPackagePath))
+									break;
+								// Generate the Metadata zip entry name
+								String metadataZipEntryName = zipPath.substring(repoPackagePath.length());
+								ZipEntry metadataZipEntry = new ZipEntry(metadataZipEntryName);
+								zipOS.putNextEntry(metadataZipEntry);
+								// Copy bytes over from Github archive input stream to Metadata zip output stream
+								byte[] buffer = new byte[1024];
+								int length = 0;
+								while((length = zipIS.read(buffer)) > 0)
+									zipOS.write(buffer, 0, length);
+								zipOS.closeEntry();
+							}
+							break;
+						}						
 					}
 					if (!foundPackageXml && repoPackagePath != null) {
 						logger.error("Could not find package.xml at path: {}", normalizedPath + "/package.xml");
